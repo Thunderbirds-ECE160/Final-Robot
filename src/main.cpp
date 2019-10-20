@@ -40,6 +40,9 @@ void setup() {
 }
 
 void loop() {
+  drivePS2();
+}
+void drivePS2(){
   ps2Boi.read_gamepad(false, VIBES);
 
   // put your main code here, to run repeatedly:
