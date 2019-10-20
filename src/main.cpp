@@ -32,16 +32,6 @@ const int gripperBoiPin = 11;
 
 Drive robot(leftServoPin, rightServoPin, gripperBoiPin);
 
-void setup() {
-  // put your setup code here, to run once:
-  robot.attachServos();
-  delay(1000);
-  ps2Boi.config_gamepad(ps2_clk, ps2_cmd, ps2_atn, ps2_dat, true, true);
-}
-
-void loop() {
-  drivePS2();
-}
 void drivePS2(){
   ps2Boi.read_gamepad(false, VIBES);
 
@@ -159,3 +149,14 @@ void drivePS2(){
   cmd = 0;
   delay(10);
 }
+void setup() {
+  // put your setup code here, to run once:
+  robot.attachServos();
+  delay(1000);
+  ps2Boi.config_gamepad(ps2_clk, ps2_cmd, ps2_atn, ps2_dat, true, true);
+}
+
+void loop() {
+  drivePS2();
+}
+
