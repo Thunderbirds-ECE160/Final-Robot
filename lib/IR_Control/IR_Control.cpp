@@ -93,44 +93,44 @@ void IR_Control::translateIR() {
 
 void IR_Control::elemental() {
   switch (ir_cmd.value) {
-    case 0xB13:
+    case ELEMENT_WATER:
       Serial.println("water");
       reset_color();
       analogWrite(LED_GREEN, 64);
       analogWrite(LED_BLUE, 128);
       break;  // water, blue
-    case 0xC9A:
+    case ELEMENT_GRASS:
       Serial.println("grass");
       reset_color();
       analogWrite(LED_GREEN, 255);
       break;  // grass, green
-    case 0xEA9:
+    case ELEMENT_EARTH:
       Serial.println("earth");
       reset_color();
       analogWrite(LED_RED, 128);
       analogWrite(LED_GREEN, 20);
       analogWrite(LED_BLUE, 128);
       break;  // earth, purple
-    case 0xA19:
+    case ELEMENT_AIR:
       Serial.println("air");
       reset_color();
       analogWrite(LED_GREEN, 255);
       analogWrite(LED_BLUE, 255);
       analogWrite(LED_RED, 255);
       break;  // air, white
-    case 0xE1E:
+    case ELEMENT_ELECTRICITY:
       Serial.println("electricity");
       reset_color();
       analogWrite(LED_RED, 128);
       analogWrite(LED_GREEN, 128);
       break;  // electricity, yellow
-    case 0xF19:
+    case ELEMENT_FIRE:
       Serial.println("fire");
       reset_color();
       analogWrite(LED_RED, 255);
       analogWrite(LED_GREEN, 55);
       break;  // fire, orange
-    case 0x5A5:
+    case ROBOT_HIT:
       Serial.println("hit");
       reset_color();
       analogWrite(LED_RED, 255);
@@ -149,19 +149,27 @@ void IR_Control::getCMD() {
   // proper state var, then waits for next execution
   // Waiting for input
   if (remote->decode(&ir_cmd)) {
-    // Check if the button was held
-    if (ir_cmd.value == REPEAT) {
-      // Do checks based on previous input
-      parseCMD(prev_cmd.value);
+    // Check the length of the IR command, if its only 3 digits long, its an
+    // elemental command
+    if (ir_cmd.value < 0xFFF) {
+      elemental();
       remote->resume();
     } else {
-      // Do checks based on current input, then stash it in case button is held
-      parseCMD(ir_cmd.value);
-      // Ensuring its Pass by Value, not by Reference
-      memmove(&prev_cmd, &ir_cmd, sizeof(ir_cmd));
-      remote->resume();
+      // Check if the button was held
+      if (ir_cmd.value == REPEAT) {
+        // Do checks based on previous input
+        parseCMD(prev_cmd.value);
+        remote->resume();
+      } else {
+        // Do checks based on current input, then stash it in case button is
+        // held
+        parseCMD(ir_cmd.value);
+        // Ensuring its Pass by Value, not by Reference
+        memmove(&prev_cmd, &ir_cmd, sizeof(ir_cmd));
+        remote->resume();
+      }
+      // Allow IR reciever to get new codes
     }
-    // Allow IR reciever to get new codes
   } else {
     ir_cmd.value = 0x0;
     parseCMD(ir_cmd.value);
