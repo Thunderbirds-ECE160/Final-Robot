@@ -82,7 +82,7 @@ class IR_Control {
 
   void getCMD();
   void parseCMD(int);
-  void execCMD(int);
+  void execCMD();
 };
 
 IR_Control::IR_Control(IRrecv* remote_obj, Drive* robot_obj) {

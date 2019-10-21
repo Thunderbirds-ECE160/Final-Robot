@@ -17,8 +17,7 @@ void PS2_Control::read_controller(){
   ps2_Gamepad->read_gamepad(false, V_I_B_E_S);
 
   // put your main code here, to run repeatedly:
-  if (ps2_Gamepad->ButtonPressed(PSB_PAD_UP) ||
-     /* (int(ps2_Analog(PSS_RY)) < 120 || int(ps2_Gamepad->Analog(PSS_LY)) < 120)*/) {
+  if (ps2_Gamepad->ButtonPressed(PSB_PAD_UP)) {
     currentCMD = DRIVE_FWD;
   }
 
@@ -30,8 +29,7 @@ void PS2_Control::read_controller(){
     currentCMD = GRAB;
   }
 
-  if (ps2_Gamepad->ButtonPressed(PSB_PAD_DOWN) ||
-      (int(ps2_Gamepad->Analog(PSS_RY)) > 135 || int(ps2_Gamepad->Analog(PSS_LY)) > 135)) {
+  if (ps2_Gamepad->ButtonPressed(PSB_PAD_DOWN)) {
     currentCMD = DRIVE_BACKWARD;
   }
 

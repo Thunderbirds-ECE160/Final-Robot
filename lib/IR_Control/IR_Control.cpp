@@ -145,7 +145,7 @@ void reset_color() {
 }
 
 void IR_Control::getCMD() {
-    // The remote will wait for a button press, then it will decode it, change the
+  // The remote will wait for a button press, then it will decode it, change the
   // proper state var, then waits for next execution
   // Waiting for input
   if (remote->decode(&ir_cmd)) {
@@ -168,37 +168,96 @@ void IR_Control::getCMD() {
   }
 }
 
-void IR_Control::parseCMD(int ir_val){
-switch (ir_val){
+void IR_Control::parseCMD(int ir_val) {
+  switch (ir_val) {
     case BTN_VOLUP:
-        currentCMD = DRIVE_FWD;
-    break;
+      currentCMD = DRIVE_FWD;
+      break;
     case BTN_VOLDWN:
-        currentCMD = DRIVE_BACKWARD;
-    break;
+      currentCMD = DRIVE_BACKWARD;
+      break;
     case BTN_REWIND:
-        currentCMD = SPIN_LEFT;
-    break;
+      currentCMD = SPIN_LEFT;
+      break;
     case BTN_FSTFWD:
-        currentCMD = SPIN_RIGHT;
-    break;
+      currentCMD = SPIN_RIGHT;
+      break;
     case BTN_PAUSE:
-        currentCMD = FIRE;
-    break;
+      currentCMD = FIRE;
+      break;
     case BTN_UP:
-        currentCMD = PIV_RIGHT;
-    break;
+      currentCMD = PIV_RIGHT;
+      break;
     case BTN_DOWN:
-        currentCMD = PIV_LEFT;
-    break;
+      currentCMD = PIV_LEFT;
+      break;
     case BTN_STREPT:
-        currentCMD = TURN_RIGHT;
-    break;
+      currentCMD = TURN_RIGHT;
+      break;
     case BTN_0:
-        currentCMD = TURN_LEFT;
-    break;
+      currentCMD = TURN_LEFT;
+      break;
     default:
-    currentCMD = 0;
-    break;
-    }
+      currentCMD = 0;
+      break;
+  }
+  execCMD();
+}
+
+void IR_Control::execCMD() {
+  switch (currentCMD) {
+    case DRIVE_FWD:
+      robot->drive(FORWARD);
+      delay(50);
+
+      robot->stop();
+      break;
+    case SPIN_LEFT:
+      robot->spin(LEFT);
+      delay(50);
+      robot->stop();
+      break;
+
+    case DRIVE_BACKWARD:
+      robot->drive(BACKWARD);
+      delay(50);
+      robot->stop();
+      break;
+
+    case SPIN_RIGHT:
+      robot->spin(RIGHT);
+      delay(50);
+      robot->stop();
+      break;
+
+    case FIRE:
+      // removed for now
+      break;
+    case PIV_LEFT:
+      robot->turn(LEFT);
+      delay(50);
+      robot->stop();
+
+      break;
+    case TURN_LEFT:
+      robot->pivot(LEFT);
+      delay(50);
+
+      robot->stop();
+
+      break;
+    case PIV_RIGHT:
+      robot->turn(RIGHT);
+      delay(50);
+      robot->stop();
+      break;
+    case TURN_RIGHT:
+      robot->pivot(RIGHT);
+      delay(50);
+      robot->stop();
+      break;
+    default:
+      break;
+  }
+  currentCMD = 0;
 }
