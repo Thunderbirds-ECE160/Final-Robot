@@ -17,7 +17,10 @@
  **************************************************************************************************************************************************/
 #include "PS2_Control.h"
 
-
+void PS2_Control::init(){
+    robot->attachServos();
+    ps2_Gamepad->config_gamepad(PS2_CLOCK, PS2_COMMAND, PS2_ATTENTION, PS2_DATA, true, true);
+}
 
 void PS2_Control::read_controller(){
   ps2_Gamepad->read_gamepad(false, V_I_B_E_S);

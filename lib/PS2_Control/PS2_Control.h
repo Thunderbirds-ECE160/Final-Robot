@@ -17,6 +17,7 @@
  **************************************************************************************************************************************************/
 #include <PS2X_lib.h>
 #include <Drive.h>
+#include "cpu_map.h"
 
 #define DRIVE_FWD 1
 #define DRIVE_BACKWARD 2
@@ -37,6 +38,8 @@ class PS2_Control {
  public:
   PS2_Control(PS2X, Drive);
   ~PS2_Control();
+
+  void init();
   
   void read_controller();
   void parseCMD();
@@ -45,6 +48,7 @@ class PS2_Control {
 PS2_Control::PS2_Control(PS2X gamepad, Drive robo) {
         ps2_Gamepad =&gamepad;
         robot = &robo;
+\
 }
 
 PS2_Control::~PS2_Control() {}
