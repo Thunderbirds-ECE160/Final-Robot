@@ -52,13 +52,14 @@ private:
     decode_results prev_cmd;
     decode_results current_cmd;
 public:
-    IR_Control(/* args */);
+    IR_Control();
     ~IR_Control();
     void translateIR();
     
 };
 
-IR_Control::IR_Control(/* args */){
+IR_Control::IR_Control(){
+    remote.enableIRIn();
 }
 
 IR_Control::~IR_Control(){
