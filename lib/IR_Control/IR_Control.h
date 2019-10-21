@@ -14,10 +14,11 @@
  *
  *
  **************************************************************************************************************************************************/
+#ifndef IR_CONTROL_H
+#define IR_CONTROL_H
 
 #include <Drive.h>
 #include <EIRremote.h>
-#include "cpu_map.h"
 
 /*============================================================*
  *                     VAR DECLARATIONS                       *
@@ -74,8 +75,12 @@ class IR_Control {
   int currentCMD;
 
  public:
-  IR_Control(IRrecv*, Drive*);
-  ~IR_Control();
+  IR_Control(IRrecv* remote_obj, Drive* robot_obj) {
+    remote = remote_obj;
+    robot = robot_obj;
+  }
+
+  ~IR_Control() {}
   void init();
 
   void translateIR();
@@ -85,10 +90,4 @@ class IR_Control {
   void parseCMD(int);
   void execCMD();
 };
-
-IR_Control::IR_Control(IRrecv* remote_obj, Drive* robot_obj) {
-  remote = remote_obj;
-  robot = robot_obj;
-}
-
-IR_Control::~IR_Control() {}
+#endif

@@ -7,7 +7,8 @@
  *  This file contains some pin definitions for the robot. 
  * There are no functions or classes associated with this header.
  **************************************************************************************************************************************************/
-
+#ifndef CPU_MAP_H_
+#define CPU_MAP_H_
 //Defining the Servo Pins 
 //***DO NOT CHANGE - HARD WIRED ESSENTIALLY*
 #define LEFT_SERVO_PIN 12
@@ -29,3 +30,5 @@
 #define LED_RED 5
 #define LED_GREEN 6
 #define LED_BLUE 9
+
+#endif

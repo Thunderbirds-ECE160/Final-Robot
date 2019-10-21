@@ -37,7 +37,9 @@
  **************************************************************************************************************************************************/
 #include <PS2X_lib.h>
 #include <Drive.h>
-#include "cpu_map.h"
+
+#ifndef PS2_CONTROL_H_
+#define PS2_CONTROL_H_
 
 #define DRIVE_FWD 1
 #define DRIVE_BACKWARD 2
@@ -56,19 +58,16 @@ class PS2_Control {
     int currentCMD;
     boolean isTurnMode;
  public:
-  PS2_Control(PS2X, Drive);
-  ~PS2_Control();
+PS2_Control(PS2X* gamepad, Drive* robo) {
+        ps2_Gamepad =gamepad;
+        robot = robo;
 
+}
+~PS2_Control() {}
   void init();
   
   void read_controller();
   void parseCMD();
 };
 
-PS2_Control::PS2_Control(PS2X gamepad, Drive robo) {
-        ps2_Gamepad =&gamepad;
-        robot = &robo;
-
-}
-
-PS2_Control::~PS2_Control() {}
+#endif

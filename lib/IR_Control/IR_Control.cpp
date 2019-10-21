@@ -8,11 +8,18 @@
  **************************************************************************************************************************************************/
 
 #include "IR_Control.h"
+#include "cpu_map.h"
 
 void IR_Control::init() {
   remote->enableIRIn();
   robot->attachServos();
 }
+void reset_color() {
+  digitalWrite(LED_BLUE, LOW);
+  digitalWrite(LED_RED, LOW);
+  digitalWrite(LED_GREEN, LOW);
+}
+
 
 void IR_Control::translateIR() {
   switch (ir_cmd.value) {
@@ -138,11 +145,6 @@ void IR_Control::elemental() {
   }
 }
 
-void reset_color() {
-  digitalWrite(LED_BLUE, LOW);
-  digitalWrite(LED_RED, LOW);
-  digitalWrite(LED_GREEN, LOW);
-}
 
 void IR_Control::getCMD() {
   // The remote will wait for a button press, then it will decode it, change the

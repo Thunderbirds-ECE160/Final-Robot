@@ -8,12 +8,16 @@
  **************************************************************************************************************************************************/
 #include "PS2_Control.h"
 
-void PS2_Control::init(){
-    robot->attachServos();
-    ps2_Gamepad->config_gamepad(PS2_CLOCK, PS2_COMMAND, PS2_ATTENTION, PS2_DATA, true, true);
+#include "cpu_map.h"
+
+
+void PS2_Control::init() {
+  robot->attachServos();
+  ps2_Gamepad->config_gamepad(PS2_CLOCK, PS2_COMMAND, PS2_ATTENTION, PS2_DATA,
+                              true, true);
 }
 
-void PS2_Control::read_controller(){
+void PS2_Control::read_controller() {
   ps2_Gamepad->read_gamepad(false, V_I_B_E_S);
 
   // put your main code here, to run repeatedly:
@@ -21,7 +25,8 @@ void PS2_Control::read_controller(){
     currentCMD = DRIVE_FWD;
   }
 
-  if (ps2_Gamepad->ButtonPressed(PSB_PAD_LEFT) || int(ps2_Gamepad->Analog(PSS_LX)) < 120) {
+  if (ps2_Gamepad->ButtonPressed(PSB_PAD_LEFT) ||
+      int(ps2_Gamepad->Analog(PSS_LX)) < 120) {
     currentCMD = SPIN_LEFT;
   }
 
@@ -33,7 +38,8 @@ void PS2_Control::read_controller(){
     currentCMD = DRIVE_BACKWARD;
   }
 
-  if (ps2_Gamepad->ButtonPressed(PSB_PAD_RIGHT) || int(ps2_Gamepad->Analog(PSS_LX)) > 135) {
+  if (ps2_Gamepad->ButtonPressed(PSB_PAD_RIGHT) ||
+      int(ps2_Gamepad->Analog(PSS_LX)) > 135) {
     currentCMD = SPIN_RIGHT;
   }
 
@@ -48,11 +54,11 @@ void PS2_Control::read_controller(){
   if (ps2_Gamepad->ButtonPressed(PSB_START)) {
     isTurnMode = !isTurnMode;
   }
-    parseCMD();
+  parseCMD();
 }
 
-void PS2_Control::parseCMD(){
-switch (currentCMD) {
+void PS2_Control::parseCMD() {
+  switch (currentCMD) {
     case DRIVE_FWD:
       while (ps2_Gamepad->Button(PSB_PAD_UP)) {
         robot->drive(FORWARD);
