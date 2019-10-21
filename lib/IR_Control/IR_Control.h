@@ -1,27 +1,28 @@
 /*************************************************************************************************************************************************
- * Project:
- * Author: Alex Westerman
- * Date Created:
+ * File: IR_Control.h
+ * Author: David Purdy, Ported by Alex Westerman
+ * Date Created: 10/20/2019
  * Description
  * ======================
  *
- * 
- * Important Functions
+ * Class Variables
  * ======================
  *
  *
- * Misc Functions
+ * Class Functions
  * ======================
  *
  *
  **************************************************************************************************************************************************/
 
+#include <Drive.h>
 #include <EIRremote.h>
+#include "cpu_map.h"
 
 /*============================================================*
  *                     VAR DECLARATIONS                       *
  *============================================================*/
-//Some defines for the Remote Buttons (used for easier reading)
+// Some defines for the Remote Buttons (used for easier reading)
 #define BTN_POWER 0xFFA25D
 #define BTN_FUNC 0xFFE21D
 #define BTN_VOLUP 0xFF629D
@@ -46,21 +47,47 @@
 
 #define REPEAT 0xFFFFFFFF
 
-class IR_Control{
-private:
-    IRrecv remote;
-    decode_results prev_cmd;
-    decode_results current_cmd;
-public:
-    IR_Control();
-    ~IR_Control();
-    void translateIR();
-    
+#define ELEMENT_WATER 0xB13
+#define ELEMENT_GRASS 0xC9A
+#define ELEMENT_EARTH 0xEA9
+#define ELEMENT_AIR 0xA19
+#define ELEMENT_ELECTRICITY 0XE1E
+#define ROBOT_HIT 0x5A5
+
+#define DRIVE_FWD 1
+#define DRIVE_BACKWARD 2
+#define SPIN_LEFT 3
+#define SPIN_RIGHT 4
+#define PIV_LEFT 5
+#define PIV_RIGHT 6
+#define TURN_LEFT 7
+#define TURN_RIGHT 8
+#define FIRE 9
+
+class IR_Control {
+ private:
+  Drive* robot;
+  IRrecv* remote;
+  decode_results prev_cmd;
+  decode_results ir_cmd;
+  int currentCMD;
+
+ public:
+  IR_Control(IRrecv*, Drive*);
+  ~IR_Control();
+  void init();
+
+  void translateIR();
+  void elemental();
+
+  void getCMD();
+  void parseCMD(int);
+  void execCMD(int);
 };
 
-IR_Control::IR_Control(){
-    remote.enableIRIn();
+IR_Control::IR_Control(IRrecv* remote_obj, Drive* robot_obj) {
+  remote = remote_obj;
+  robot = robot_obj;
 }
 
-IR_Control::~IR_Control(){
-}
+IR_Control::~IR_Control() {}

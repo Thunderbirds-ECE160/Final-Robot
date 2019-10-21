@@ -26,3 +26,6 @@
 
 //LED to display Elemental damage
 //TODO Add LED Pins
+#define LED_RED 5
+#define LED_GREEN 6
+#define LED_BLUE 9
