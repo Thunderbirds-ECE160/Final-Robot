@@ -4,6 +4,7 @@
  * Date Created: 10/20/2019
  * Description
  * ======================
+ * This class contains the code related to controlling the robot using an IR Remote, as well as 
  *
  * Class Variables
  * ======================
@@ -18,7 +19,8 @@
 #define IR_CONTROL_H
 
 #include <Drive.h>
-#include <EIRremote.h>
+//#include <EIRremote.h>
+#include <IRremote.h>
 
 /*============================================================*
  *                     VAR DECLARATIONS                       *
@@ -74,10 +76,13 @@ class IR_Control {
   decode_results ir_cmd;
   int currentCMD;
 
+  IRsend* transmitter;
+
  public:
-  IR_Control(IRrecv* remote_obj, Drive* robot_obj) {
+  IR_Control(IRrecv* remote_obj, Drive* robot_obj, IRsend* trans_obj) {
     remote = remote_obj;
     robot = robot_obj;
+    transmitter = trans_obj;
   }
 
   ~IR_Control() {}
@@ -89,5 +94,6 @@ class IR_Control {
   void getCMD();
   void parseCMD(int);
   void execCMD();
+  void irSendFire();
 };
 #endif

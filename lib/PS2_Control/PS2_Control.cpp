@@ -10,11 +10,25 @@
 
 #include "cpu_map.h"
 
-
 void PS2_Control::init() {
   robot->attachServos();
   ps2_Gamepad->config_gamepad(PS2_CLOCK, PS2_COMMAND, PS2_ATTENTION, PS2_DATA,
                               true, true);
+  remote->enableIRIn();
+}
+
+void PS2_Control::irSendFire() {
+  // Using example code from class for now, will change implementation later
+  // when needed
+  // Send the code 3 times. First one is often received as garbage
+  for (int i = 0; i < 3; i++) {
+    transmitter->sendSony(0x5A5,
+                          12);  // Transmit the code 0x5A5 signal from IR LED
+    delay(100);
+  }
+  // Have to enable recievers afterward (for some reason)
+  // Delay is used as a "grace period" for the function to complete
+  remote->enableIRIn();
 }
 
 void PS2_Control::read_controller() {
@@ -29,11 +43,11 @@ void PS2_Control::read_controller() {
       int(ps2_Gamepad->Analog(PSS_LX)) < 120) {
     currentCMD = SPIN_LEFT;
   }
-
-  if (ps2_Gamepad->ButtonPressed(PSB_BLUE)) {
-    currentCMD = GRAB;
-  }
-
+  /*
+    if (ps2_Gamepad->ButtonPressed(PSB_BLUE)) {
+      currentCMD = GRAB;
+    }
+  */
   if (ps2_Gamepad->ButtonPressed(PSB_PAD_DOWN)) {
     currentCMD = DRIVE_BACKWARD;
   }
@@ -53,6 +67,9 @@ void PS2_Control::read_controller() {
 
   if (ps2_Gamepad->ButtonPressed(PSB_START)) {
     isTurnMode = !isTurnMode;
+  }
+  if (ps2_Gamepad->ButtonPressed(PSB_R2)) {
+    currentCMD = PS2_FIRE;
   }
   parseCMD();
 }
@@ -94,8 +111,8 @@ void PS2_Control::parseCMD() {
       robot->stop();
       break;
 
-    case GRAB:
-      // removed for now
+    case PS2_FIRE:
+      irSendFire();
       break;
     case PIV_TRN_LEFT:
       if (isTurnMode) {

@@ -23,12 +23,13 @@
 
 //IR Pins
 //TODO Add IR Pins
-#define IR_REMOTE_RECV 3
+#define IR_REMOTE_RECV 4
+#define IR_REMOTE_TRANS 3-
 
 //LED to display Elemental damage
 //TODO Add LED Pins
-#define LED_RED 5
-#define LED_GREEN 6
-#define LED_BLUE 9
+#define LED_RED A0
+#define LED_GREEN A1
+#define LED_BLUE A2
 
 #endif

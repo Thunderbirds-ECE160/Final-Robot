@@ -8,7 +8,9 @@
  **************************************************************************************************************************************************/
 
 #include "IR_Control.h"
+
 #include "cpu_map.h"
+
 
 void IR_Control::init() {
   remote->enableIRIn();
@@ -20,6 +22,18 @@ void reset_color() {
   digitalWrite(LED_GREEN, LOW);
 }
 
+void IR_Control::irSendFire() {
+  // Using example code from class for now, will change implementation later
+  // when needed
+  // Send the code 3 times. First one is often received as garbage
+  for (int i = 0; i < 3; i++) {
+    transmitter->sendSony(0x5A5, 12);  // Transmit the code 0x5A5 signal from IR LED
+    delay(100);
+  }
+  // Have to enable recievers afterward (for some reason)
+  //Delay is used as a "grace period" for the function to complete
+  remote->enableIRIn();
+  }
 
 void IR_Control::translateIR() {
   switch (ir_cmd.value) {
@@ -145,7 +159,6 @@ void IR_Control::elemental() {
   }
 }
 
-
 void IR_Control::getCMD() {
   // The remote will wait for a button press, then it will decode it, change the
   // proper state var, then waits for next execution
@@ -241,7 +254,7 @@ void IR_Control::execCMD() {
       break;
 
     case FIRE:
-      // removed for now
+      irSendFire();
       break;
     case PIV_LEFT:
       robot->turn(LEFT);
