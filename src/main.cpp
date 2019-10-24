@@ -50,18 +50,22 @@ PS2_Control ps2_Drive(&ps2Boi, &robot, &transmitter, &ir_reciever);
  *                         MAIN FUNCTIONS                     *
  *============================================================*/
 void setup() {
+  Serial.begin(9600);
+  pinMode(LED_GREEN,OUTPUT);
+  pinMode(LED_RED,OUTPUT);
+  pinMode(LED_BLUE, OUTPUT);
   //Initalize the PS2_Control object
   ps2_Drive.init();
-  ir_Drive.init();
+  //ir_Drive.init();
 }
 
 void loop() {
 //Read and operate on controller input
- ps2_Drive.read_controller();
+// ps2_Drive.read_controller();
  
 //Read and operate on IR input
-//ir_Drive.getCMD();
+ir_Drive.getCMD();
 
  //Short delay to prevent wack execution
- delay(10);
+ delay(50);
 }

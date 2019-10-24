@@ -16,20 +16,20 @@
 #define GRIPPER_SERVO_PIN 11
 
 //PS2 Controller Stuff
-#define PS2_CLOCK 7
-#define PS2_DATA 8
-#define PS2_COMMAND 9
-#define PS2_ATTENTION 10
+#define PS2_CLOCK 10
+#define PS2_DATA 2
+#define PS2_COMMAND 8
+#define PS2_ATTENTION 7
 
 //IR Pins
 //TODO Add IR Pins
 #define IR_REMOTE_RECV 4
-#define IR_REMOTE_TRANS 3-
+#define IR_REMOTE_TRANS 3
 
 //LED to display Elemental damage
 //TODO Add LED Pins
-#define LED_RED A0
-#define LED_GREEN A1
-#define LED_BLUE A2
+#define LED_RED 9
+#define LED_GREEN 6
+#define LED_BLUE 5
 
 #endif

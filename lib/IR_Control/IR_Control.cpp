@@ -28,7 +28,7 @@ void IR_Control::irSendFire() {
   // Send the code 3 times. First one is often received as garbage
   for (int i = 0; i < 3; i++) {
     transmitter->sendSony(0x5A5, 12);  // Transmit the code 0x5A5 signal from IR LED
-    delay(100);
+    delay(50);
   }
   // Have to enable recievers afterward (for some reason)
   //Delay is used as a "grace period" for the function to complete
@@ -113,52 +113,49 @@ void IR_Control::translateIR() {
 }
 
 void IR_Control::elemental() {
+  reset_color();
   switch (ir_cmd.value) {
     case ELEMENT_WATER:
       Serial.println("water");
-      reset_color();
       analogWrite(LED_GREEN, 64);
       analogWrite(LED_BLUE, 128);
       break;  // water, blue
     case ELEMENT_GRASS:
       Serial.println("grass");
-      reset_color();
       analogWrite(LED_GREEN, 255);
       break;  // grass, green
     case ELEMENT_EARTH:
       Serial.println("earth");
-      reset_color();
       analogWrite(LED_RED, 128);
       analogWrite(LED_GREEN, 20);
       analogWrite(LED_BLUE, 128);
       break;  // earth, purple
     case ELEMENT_AIR:
       Serial.println("air");
-      reset_color();
       analogWrite(LED_GREEN, 255);
       analogWrite(LED_BLUE, 255);
       analogWrite(LED_RED, 255);
       break;  // air, white
     case ELEMENT_ELECTRICITY:
       Serial.println("electricity");
-      reset_color();
-      analogWrite(LED_RED, 128);
-      analogWrite(LED_GREEN, 128);
+
+      analogWrite(LED_RED, 255);
+      analogWrite(LED_GREEN, 255);
       break;  // electricity, yellow
     case ELEMENT_FIRE:
       Serial.println("fire");
-      reset_color();
       analogWrite(LED_RED, 255);
       analogWrite(LED_GREEN, 55);
       break;  // fire, orange
     case ROBOT_HIT:
       Serial.println("hit");
-      reset_color();
       analogWrite(LED_RED, 255);
       break;  // hit, red
   }
+  delay(2000);
+  reset_color();
 }
-
+  
 void IR_Control::getCMD() {
   // The remote will wait for a button press, then it will decode it, change the
   // proper state var, then waits for next execution

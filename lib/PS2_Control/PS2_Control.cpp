@@ -24,7 +24,7 @@ void PS2_Control::irSendFire() {
   for (int i = 0; i < 3; i++) {
     transmitter->sendSony(0x5A5,
                           12);  // Transmit the code 0x5A5 signal from IR LED
-    delay(100);
+    delay(50);
   }
   // Have to enable recievers afterward (for some reason)
   // Delay is used as a "grace period" for the function to complete
