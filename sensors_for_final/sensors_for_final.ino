@@ -13,7 +13,7 @@
 SR04 sonar = SR04(echo, trig); //sonar pins 1st recieves then 2nd sends
 SR04 sonar2 = SR04(echo, trig); // for sonar 2
 int half = 500;
-
+int yeet= 1;
 //***************pins changed when robot configured
 int sensorL = A4;
 int sensorR = A5;
