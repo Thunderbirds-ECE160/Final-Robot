@@ -262,7 +262,6 @@ void IR_Control::execCMD() {
     case TURN_LEFT:
       robot->pivot(LEFT);
       delay(50);
-
       robot->stop();
 
       break;

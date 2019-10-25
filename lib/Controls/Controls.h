@@ -49,12 +49,14 @@ class Controls {
   decode_results prev_cmd;
   decode_results recv_cmd;
   int currentCMD;
+  bool isTurnMode;
 
  public:
   Controls(Drive* _robot, PS2X* _controller) {
     robot = _robot;
     controller = _controller;
     currentSys = Control_Sys::PS2_CONTROL;
+    isTurnMode = false;
   }
 
   Controls(Drive* _robot, IRrecv* _remote) {
