@@ -21,10 +21,11 @@
 #include <Arduino.h>      //The Standard Arduino Library
 #include <Drive.h>        //Robot Driving Library (Written by Alex Westerman)
 #include <PS2X_lib.h>     //PS2 Controller Interface Library (Written by Bill Porter - http://http://www.billporter.info/2010/06/05/playstation-2-controller-arduino-library-v1-0/)
-#include <PS2_Control.h>  //PS2 Controlled Driving Library (Written by Alex Westerman)
-#include <IR_Control.h>   //IR Controlled Driving Library (Written by David Purdy, Ported by Alex Westerman)
+//#include <PS2_Control.h>  //PS2 Controlled Driving Library (Written by Alex Westerman)
+//#include <IR_Control.h>   //IR Controlled Driving Library (Written by David Purdy, Ported by Alex Westerman)
 //#include <EIRremote.h>    //IR Reciever Library provided by professors
-#include <IRremote.h>
+//#include <IRremote.h>
+#include <Controls.h>
 /*============================================================*
  *                     VAR DECLARATIONS                       *
  *============================================================*/
@@ -34,16 +35,18 @@ PS2X ps2Boi;
 //Drive object with servo pinouts
 Drive robot(LEFT_SERVO_PIN, RIGHT_SERVO_PIN, GRIPPER_SERVO_PIN);
 
-//IR Reciever Object
-IRrecv ir_reciever(IR_REMOTE_RECV);
+Controls driveTrain(&robot, &ps2Boi);
 
-IRsend transmitter;
+//IR Reciever Object
+//IRrecv ir_reciever(IR_REMOTE_RECV);
+
+//IRsend transmitter;
 
 //IR_Control object with proper reference params
-IR_Control ir_Drive(&ir_reciever, &robot, &transmitter);
+//IR_Control ir_Drive(&ir_reciever, &robot, &transmitter);
 
 //PS2_Control object with proper reference params
-PS2_Control ps2_Drive(&ps2Boi, &robot, &transmitter, &ir_reciever);
+//PS2_Control ps2_Drive(&ps2Boi, &robot, &transmitter, &ir_reciever);
 
 
 /*============================================================*
@@ -55,8 +58,10 @@ void setup() {
   pinMode(LED_RED,OUTPUT);
   pinMode(LED_BLUE, OUTPUT);
   //Initalize the PS2_Control object
-  ps2_Drive.init();
+  //ps2_Drive.init();
   //ir_Drive.init();
+
+  driveTrain.init();
 }
 
 void loop() {
@@ -64,8 +69,9 @@ void loop() {
 // ps2_Drive.read_controller();
  
 //Read and operate on IR input
-ir_Drive.getCMD();
+//ir_Drive.getCMD();
 
+driveTrain.entry();
  //Short delay to prevent wack execution
  delay(50);
 }
