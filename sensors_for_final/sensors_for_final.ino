@@ -15,9 +15,9 @@ SR04 sonar2 = SR04(echo, trig); // for sonar 2
 int half = 500;
 
 //***************pins changed when robot configured
-int sensorL = 13;
-int sensorR = 14;
-int sensorM = 15;
+int sensorL = A4;
+int sensorR = A5;
+int sensorM = A6;
 
 //**********************************************************************************************
 
