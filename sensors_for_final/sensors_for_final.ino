@@ -12,7 +12,13 @@
 #define echo 6 //pin receiving the signal 
 #define LEFT_SERVO_PIN 12 
 #define RIGHT_SERVO_PIN 13
- 
+
+#define CW_ROT 1300
+#define CCW_ROT 1700
+#define STOP_ROT 1500
+#define CW_LOW_ROT 1450
+#define CCW_LOW_ROT 1550
+
 SR04 sonar = SR04(echo, trig); //sonar pins 1st recieves then 2nd sends
 Servo leftServo;
 Servo rightServo;
@@ -28,7 +34,8 @@ int sensorM = A6;
 
 void setup() {
   Serial.begin(9600);
- 
+  leftServo.attach(LEFT_SERVO_PIN);
+  rightServo.attach(RIGHT_SERVO_PIN);
 }
 
 
@@ -51,14 +58,13 @@ void sonar_test() {  //this is the function that makes the robot work based off 
   read_sonar();
 
   if (sound < 25) {
-    //pivot_left(); for such a time
+    void STOP();
+    void PIVOT();
   }
-  else if(sound > 65){
-    //drivefwdfast();
+  else if(sound > 25){
+    void DRIVE();
   }
-  else if(sound < 65){
-    //drivefwdslow();
-  }
+ 
 }
 
 
@@ -80,9 +86,10 @@ else if (analogRead(sensorL)>850 && analogRead(sensorM)>850 && analogRead(sensor
   while(true)
   {
     //pivot right; 
-  }
+  
   if((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 && analogRead(sensorR)> 850 ) || (analogRead(sensorL) <600 && analogRead(sensorM)<600 && analogRead(sensorR) > 850))
   {break;} // break if left and right sensor are reading black and middle sensor is reading white
+}
 }
 else if (analogRead(sensorL) >850 && analogRead(sensorM)<600 && analogRead(sensorR)<600) // if the middle and right sensor read white, pivot right 
 {
@@ -105,16 +112,27 @@ else if (analogRead(sensorL)<600 && analogRead(sensorM) < 600 && analogRead(sens
 {
   while(true)
   {
-    // pivot left
-    if ((analogRead(sensorL)> 850  && analogRead(sensorM) < 600 && analogRead(sensorR) > 850) || analogRead(sensorL)> 850 && analogRead(sensorM)<600 && analogRead(sensorR) < 600))
-    {break:} // break if left and right sensor are reading black and middle sensor is reading white
+    // pivot left;
+    if (((analogRead(sensorL)> 850  && analogRead(sensorM) < 600 && analogRead(sensorR) > 850) || analogRead(sensorL)> 850 && analogRead(sensorM)<600 && analogRead(sensorR) < 600)){
+    {break;} // break if left and right sensor are reading black and middle sensor is reading white
   }
 }
-else
-{
+//else
+//{
   // move forward // if no line is detected move forward
 }
 }
+
 void line_test() {
 
+}
+
+void PIVOT(){
+  leftServo.writeMicroseconds(CCW_ROT);
+  delay(50); 
+}
+
+void STOP(){
+ leftServo.writeMicroseconds(STOP_ROT);
+  rightServo.writeMicroseconds(STOP_ROT);
 }
