@@ -68,9 +68,50 @@ void read_sonar() {
 
 
 void line_follow() {
-
+if(analogRead(sensorL)>850 && analogRead (sensorM)<600 && analogRead(sensorR) > 850)// left and right reading black and middle reading white, go forward
+{
+  // drive forward
 }
-
+else if (analogRead(sensorL)>850 && analogRead(sensorM)>850 && analogRead(sensorR)< 600) // left and middle reading black turn right
+{
+  while(true)
+  {
+    //pivot right; 
+  }
+  if((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 && analogRead(sensorR)> 850 ) || (analogRead(sensorL) <600 && analogRead(sensorM)<600 && analogRead(sensorR) > 850))
+  {break;} // break if left and right sensor are reading black and middle sensor is reading white
+}
+else if (analogRead(sensorL) >850 && analogRead(sensorM)<600 && analogRead(sensorR)<600) // if the middle and right sensor read white, pivot right 
+{
+  while(true){
+    //pivotright;
+    if((analogRead(sensorL)> 850 && analogRead(sensorM)< 600 && analogRead(sensorR) > 850 || analogRead(sensorL) < 600 && analogRead(sensorM)> 850 && analogRead(sensorR)< 650 ))
+    {break;} // break if left and right sensor reading black and middle sensor is reading white
+  }
+}
+else if (analogRead(sensorL) < 600 && analogRead(sensorM)>850 && analogRead(sensorR)> 850) // if middle and right sensor are reading black pivot left
+{
+  while(true)
+  {
+    //pivot left;
+    if((analogRead(sensorL) > 850 && analogRead(sensorM)< 600 && analogRead(sensorR)> 850) || (analogRead(sensorL) > 850 && analogRead(sensorM)< 600 && analogRead(sensorR) < 600))
+    {break;}
+  }
+}
+else if (analogRead(sensorL)<600 && analogRead(sensorM) < 600 && analogRead(sensorR) > 850) // if the left and middle sensor read white pivot left
+{
+  while(true)
+  {
+    // pivot left
+    if ((analogRead(sensorL)> 850  && analogRead(sensorM) < 600 && analogRead(sensorR) > 850) || analogRead(sensorL)> 850 && analogRead(sensorM)<600 && analogRead(sensorR) < 600))
+    {break:} // break if left and right sensor are reading black and middle sensor is reading white
+  }
+}
+else
+{
+  // move forward // if no line is detected move forward
+}
+}
 void line_test() {
 
 }
