@@ -5,12 +5,12 @@
 
 //#include "drive.h"
 #include "SR04.h"
-#include <Servo.h> 
+#include <Servo.h>
 
 //****************pins to change when the robot is configured later
 #define trig 5 //pin sending signal 
 #define echo 6 //pin receiving the signal 
-#define LEFT_SERVO_PIN 12 
+#define LEFT_SERVO_PIN 12
 #define RIGHT_SERVO_PIN 13
 
 #define CW_ROT 1300
@@ -24,7 +24,7 @@ Servo leftServo;
 Servo rightServo;
 
 int half = 500;
-
+int inches = 0; 
 //***************pins changed when robot configured
 int sensorL = A4;
 int sensorR = A5;
@@ -52,87 +52,108 @@ void loop() {
 //***************************************************************************************************
 
 
-void sonar_test() {  //this is the function that makes the robot work based off of the sonar 
-  long sound = sonar.Distance();
+void sonar_test() {  //this is the function that makes the robot work based off of the sonar
+ 
 
   read_sonar();
 
-  if (sound < 25) {
+  if (inches < 25) {
     void STOP();
     void PIVOT();
   }
-  else if(sound > 25){
+  else if (inches > 25) {
     void DRIVE();
   }
- 
+
 }
 
 
-void read_sonar() {    //Serial.prints the reading for the sonar and converts sonar reading to a long value 
-  long sound = sonar.Distance();
-  Serial.print(sound);
-  Serial.println("cm");
-  delay(half);
+void read_sonar() {    //Serial.prints the reading for the sonar and converts sonar reading to a long value
+
+pinMode(trig, OUTPUT); //sends trigger pulse
+digitalWrite(trig, LOW);
+delayMicroseconds(2);
+digitalWrite(trig, HIGH);
+delayMicroseconds(10);
+digitalWrite(trig, LOW);
+pinMode(echo, INPUT); // Reads echo pulse and converts to inches
+inches = pulseIn(echo, HIGH) / 74 / 2;
+Serial.print(inches);
+Serial.println("in");
+return inches;
 }
 
 
 void line_follow() {
-if(analogRead(sensorL)>850 && analogRead (sensorM)<600 && analogRead(sensorR) > 850)// left and right reading black and middle reading white, go forward
-{
-  // drive forward
-}
-else if (analogRead(sensorL)>850 && analogRead(sensorM)>850 && analogRead(sensorR)< 600) // left and middle reading black turn right
-{
-  while(true)
+  if (analogRead(sensorL) > 850 && analogRead (sensorM) < 600 && analogRead(sensorR) > 850) // left and right reading black and middle reading white, go forward
   {
-    //pivot right; 
-  
-  if((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 && analogRead(sensorR)> 850 ) || (analogRead(sensorL) <600 && analogRead(sensorM)<600 && analogRead(sensorR) > 850))
-  {break;} // break if left and right sensor are reading black and middle sensor is reading white
-}
-}
-else if (analogRead(sensorL) >850 && analogRead(sensorM)<600 && analogRead(sensorR)<600) // if the middle and right sensor read white, pivot right 
-{
-  while(true){
-    //pivotright;
-    if((analogRead(sensorL)> 850 && analogRead(sensorM)< 600 && analogRead(sensorR) > 850 || analogRead(sensorL) < 600 && analogRead(sensorM)> 850 && analogRead(sensorR)< 650 ))
-    {break;} // break if left and right sensor reading black and middle sensor is reading white
+    // drive forward
   }
-}
-else if (analogRead(sensorL) < 600 && analogRead(sensorM)>850 && analogRead(sensorR)> 850) // if middle and right sensor are reading black pivot left
-{
-  while(true)
+  else if (analogRead(sensorL) > 850 && analogRead(sensorM) > 850 && analogRead(sensorR) < 600) // left and middle reading black turn right
   {
-    //pivot left;
-    if((analogRead(sensorL) > 850 && analogRead(sensorM)< 600 && analogRead(sensorR)> 850) || (analogRead(sensorL) > 850 && analogRead(sensorM)< 600 && analogRead(sensorR) < 600))
-    {break;}
+    while (true)
+    {
+      //pivot right;
+
+      if ((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 && analogRead(sensorR) > 850 ) || (analogRead(sensorL) < 600 && analogRead(sensorM) < 600 && analogRead(sensorR) > 850))
+      {
+        break; // break if left and right sensor are reading black and middle sensor is reading white
+      }
+    }
   }
-}
-else if (analogRead(sensorL)<600 && analogRead(sensorM) < 600 && analogRead(sensorR) > 850) // if the left and middle sensor read white pivot left
-{
-  while(true)
+  else if (analogRead(sensorL) > 850 && analogRead(sensorM) < 600 && analogRead(sensorR) < 600) // if the middle and right sensor read white, pivot right
   {
-    // pivot left;
-    if (((analogRead(sensorL)> 850  && analogRead(sensorM) < 600 && analogRead(sensorR) > 850) || analogRead(sensorL)> 850 && analogRead(sensorM)<600 && analogRead(sensorR) < 600)){
-    {break;} // break if left and right sensor are reading black and middle sensor is reading white
+    while (true) {
+      //pivotright;
+      if ((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 && analogRead(sensorR) > 850 || analogRead(sensorL) < 600 && analogRead(sensorM) > 850 && analogRead(sensorR) < 650 ))
+      {
+        break; // break if left and right sensor reading black and middle sensor is reading white
+      }
+    }
   }
-}
-//else
-//{
-  // move forward // if no line is detected move forward
-}
+  else if (analogRead(sensorL) < 600 && analogRead(sensorM) > 850 && analogRead(sensorR) > 850) // if middle and right sensor are reading black pivot left
+  {
+    while (true)
+    {
+      //pivot left;
+      if ((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 && analogRead(sensorR) > 850) || (analogRead(sensorL) > 850 && analogRead(sensorM) < 600 && analogRead(sensorR) < 600))
+      {
+        break;
+      }
+    }
+  }
+  else if (analogRead(sensorL) < 600 && analogRead(sensorM) < 600 && analogRead(sensorR) > 850) // if the left and middle sensor read white pivot left
+  {
+    while (true)
+    {
+      // pivot left;
+      if (((analogRead(sensorL) > 850  && analogRead(sensorM) < 600 && analogRead(sensorR) > 850) || analogRead(sensorL) > 850 && analogRead(sensorM) < 600 && analogRead(sensorR) < 600)) {
+        {
+          break; // break if left and right sensor are reading black and middle sensor is reading white
+        }
+      }
+    }
+    //else
+    //{
+    // move forward // if no line is detected move forward
+  }
 }
 
 void line_test() {
 
 }
 
-void PIVOT(){
+void PIVOT() {
   leftServo.writeMicroseconds(CCW_ROT);
-  delay(50); 
+  delay(50);
 }
 
-void STOP(){
- leftServo.writeMicroseconds(STOP_ROT);
+void STOP() {
+  leftServo.writeMicroseconds(STOP_ROT);
   rightServo.writeMicroseconds(STOP_ROT);
+}
+
+void DRIVE() {
+  leftServo.writeMicroseconds(CCW_ROT);
+  rightServo.writeMicroseconds(CW_ROT);
 }
