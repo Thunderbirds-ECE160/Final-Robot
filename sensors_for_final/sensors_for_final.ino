@@ -5,15 +5,20 @@
 
 //#include "drive.h"
 #include "SR04.h"
+#include <Servo.h> 
 
 //****************pins to change when the robot is configured later
-#define trig 12 //pin sending signal 
-#define echo 11 //pin receiving the signal 
-
+#define trig 5 //pin sending signal 
+#define echo 6 //pin receiving the signal 
+#define LEFT_SERVO_PIN 12 
+#define RIGHT_SERVO_PIN 13
+ 
 SR04 sonar = SR04(echo, trig); //sonar pins 1st recieves then 2nd sends
-SR04 sonar2 = SR04(echo, trig); // for sonar 2
+Servo leftServo;
+Servo rightServo;
+
 int half = 500;
-int yeet= 1;
+
 //***************pins changed when robot configured
 int sensorL = A4;
 int sensorR = A5;
@@ -21,9 +26,9 @@ int sensorM = A6;
 
 //**********************************************************************************************
 
-//void setup
 void setup() {
   Serial.begin(9600);
+ 
 }
 
 
@@ -32,36 +37,34 @@ void setup() {
 
 void loop() {
   sonar_test();
-  line_test();
-  read_sonar();
+  //line_test();
+  //read_sonar();
   line_follow();
 }
 
 //***************************************************************************************************
 
 
-void sonar_test() {
-  long soundR = sonar.Distance();
-  long soundL = sonar2.Distance();
+void sonar_test() {  //this is the function that makes the robot work based off of the sonar 
+  long sound = sonar.Distance();
+
   read_sonar();
 
-  if ( soundR < 25) {
-    //pivot_left(); for such a time 
+  if (sound < 25) {
+    //pivot_left(); for such a time
   }
-
-  else if ( soundL < 25) {
-    //pivot_right(); for such a time 
+  else if(sound > 65){
+    //drivefwdfast();
+  }
+  else if(sound < 65){
+    //drivefwdslow();
   }
 }
 
 
-void read_sonar() {
-  //sonar test
-  long soundR = sonar.Distance();
-  long soundL = sonar2.Distance();
-  Serial.print(soundR);
-  Serial.println("cm");
-  Serial.print(soundL);
+void read_sonar() {    //Serial.prints the reading for the sonar and converts sonar reading to a long value 
+  long sound = sonar.Distance();
+  Serial.print(sound);
   Serial.println("cm");
   delay(half);
 }
