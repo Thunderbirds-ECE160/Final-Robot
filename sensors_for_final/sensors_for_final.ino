@@ -1,3 +1,9 @@
+<<<<<<< Updated upstream
+=======
+#include <cpu_map.h>
+//#include <Drive.h>
+
+>>>>>>> Stashed changes
 /*
     by: DavidPurdy Oct, 22 2019
 
@@ -45,8 +51,35 @@ void setup() {
 void loop() {
   sonar_test();
   //line_test();
+<<<<<<< Updated upstream
   //read_sonar();
   line_follow();
+=======
+
+  inches = read_sonar();
+
+  if (inches <= 4) {
+    leftServo.writeMicroseconds(STOP_ROT);
+    rightServo.writeMicroseconds(STOP_ROT);
+    delay(1000);
+    //robot.pivot(LEFT);
+    leftServo.writeMicroseconds(CCW_ROT);
+    rightServo.writeMicroseconds(CW_ROT);
+    Serial.println("turning");
+  }
+  else {
+
+    //robot.drive(FORWARD);
+    rightServo.writeMicroseconds(CW_ROT);
+    Serial.println("forward");
+    inches = read_sonar();
+    delay(50);
+
+  }
+
+  delay(50);
+  //line_follow();
+>>>>>>> Stashed changes
 }
 
 //***************************************************************************************************
