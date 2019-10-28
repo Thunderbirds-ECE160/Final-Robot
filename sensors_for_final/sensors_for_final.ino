@@ -1,9 +1,6 @@
-<<<<<<< Updated upstream
-=======
 #include <cpu_map.h>
 //#include <Drive.h>
 
->>>>>>> Stashed changes
 /*
     by: DavidPurdy Oct, 22 2019
 
