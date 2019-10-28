@@ -6,7 +6,6 @@
 
 ******************************************************************************************/
 
-//#include "drive.h"
 #include "SR04.h"
 #include <Servo.h>
 
@@ -21,6 +20,8 @@
 #define STOP_ROT 1500
 #define CW_LOW_ROT 1450
 #define CCW_LOW_ROT 1550
+
+Drive robot(LEFT_SERVO_PIN, RIGHT_SERVO_PIN, GRIPPER_SERVO_PIN);
 
 SR04 sonar = SR04(echo, trig); //sonar pins 1st recieves then 2nd sends
 Servo leftServo;
@@ -39,6 +40,7 @@ void setup() {
   Serial.begin(9600);
   leftServo.attach(LEFT_SERVO_PIN);
   rightServo.attach(RIGHT_SERVO_PIN);
+  //robot.attachServos();
 }
 
 
@@ -46,7 +48,7 @@ void setup() {
 // void loop ****************************************************************************************
 
 void loop() {
-  //sonar_test();
+  // sonar_test();
   //line_test();
 
   inches = read_sonar();
@@ -83,21 +85,22 @@ void loop() {
 void sonar_test() {  //this is the function that makes the robot work based off of the sonar
 
 
-  read_sonar();
+  inches = read_sonar();
 
-  if (inches < 25) {
-    void STOP();
-    void PIVOT();
+  if (inches < 4) {
+    robot.pivot(LEFT);
+    Serial.println("turning");
   }
-  else if (inches > 25) {
-    void DRIVE();
+  else {
+    robot.drive(FORWARD);
+    Serial.println("forward");
   }
 
 }
 
 
 int read_sonar() {    //Serial.prints the reading for the sonar and converts sonar reading to a long value
-
+  int val = 0;
   pinMode(trig, OUTPUT); //sends trigger pulse
   digitalWrite(trig, LOW);
   delayMicroseconds(2);
@@ -105,10 +108,11 @@ int read_sonar() {    //Serial.prints the reading for the sonar and converts son
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
   pinMode(echo, INPUT); // Reads echo pulse and converts to inches
-  inches = pulseIn(echo, HIGH) / 74 / 2;
+  val = pulseIn(echo, HIGH) / 74 / 2;
   Serial.print(inches);
   Serial.println("in");
-  return inches;
+  delay(half);
+  return val;
 }
 
 
@@ -171,17 +175,3 @@ void line_test() {
 
 }
 
-void PIVOT() {
-  leftServo.writeMicroseconds(CCW_ROT);
-  delay(50);
-}
-
-void STOP() {
-  leftServo.writeMicroseconds(STOP_ROT);
-  rightServo.writeMicroseconds(STOP_ROT);
-}
-
-void DRIVE() {
-  leftServo.writeMicroseconds(CCW_ROT);
-  rightServo.writeMicroseconds(CW_ROT);
-}
