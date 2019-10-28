@@ -1,12 +1,11 @@
 /*************************************************************************************************************************************************
- * File: IR_Control.h
- * Author: David Purdy, Ported by Alex Westerman
- * Date Created: 10/20/2019
+ * File: Controls.h
+ * Author: Alex Westerman
+ * Date Created: 10/24/2019
  * Description
  * ======================
- * This class contains the code related to controlling the robot using an IR Remote, as well as 
- *
- * Class Variables
+ * This class will be the replacement for the previous IR_Control and
+ *PS2_Control libraries Class Variables
  * ======================
  *
  *
@@ -15,16 +14,35 @@
  *
  *
  **************************************************************************************************************************************************/
-#ifndef IR_CONTROL_H
-#define IR_CONTROL_H
-
+#ifndef CONTROLS_H_
+#define CONTROLS_H_
+/*============================================================*
+ *                      INCLUDE THINGS                        *
+ *============================================================*/
+#include <Arduino.h>
 #include <Drive.h>
-//#include <EIRremote.h>
 #include <IRremote.h>
+#include <PS2X_lib.h>
+#include <Weapon_Sys.h>
 
 /*============================================================*
  *                     VAR DECLARATIONS                       *
  *============================================================*/
+
+typedef enum { PS2_CONTROL, IR_CONTROL } Control_Sys;
+
+#define DRIVE_FORWARD 1
+#define DRIVE_BACKWARD 2
+#define SPIN_LEFT 3
+#define SPIN_RIGHT 4
+#define PIVOT_LEFT 5
+#define PIVOT_RIGHT 6
+#define TURN_LEFT 7
+#define TURN_RIGHT 8
+#define FIRE 9
+
+#define V_I_B_E_S 0
+
 // Some defines for the Remote Buttons (used for easier reading)
 #define BTN_POWER 0xFFA25D
 #define BTN_FUNC 0xFFE21D
@@ -50,50 +68,39 @@
 
 #define REPEAT 0xFFFFFFFF
 
-#define ELEMENT_WATER 0xB13
-#define ELEMENT_GRASS 0xC9A
-#define ELEMENT_EARTH 0xEA9
-#define ELEMENT_AIR 0xA19
-#define ELEMENT_ELECTRICITY 0XE1E
-#define ELEMENT_FIRE 0xF19
-#define ROBOT_HIT 0x5A5
-
-#define DRIVE_FWD 1
-#define DRIVE_BACKWARD 2
-#define SPIN_LEFT 3
-#define SPIN_RIGHT 4
-#define PIV_LEFT 5
-#define PIV_RIGHT 6
-#define TURN_LEFT 7
-#define TURN_RIGHT 8
-#define FIRE 9
-
-class IR_Control {
+class Controls {
  private:
   Drive* robot;
+  Control_Sys currentSys;
+  PS2X* controller;
   IRrecv* remote;
+  Weapon_Sys* irFireboi;
   decode_results prev_cmd;
-  decode_results ir_cmd;
+  decode_results recv_cmd;
   int currentCMD;
-
-  IRsend* transmitter;
+  bool isTurnMode;
 
  public:
-  IR_Control(IRrecv* remote_obj, Drive* robot_obj, IRsend* trans_obj) {
-    remote = remote_obj;
-    robot = robot_obj;
-    transmitter = trans_obj;
+  Controls(Drive* _robot, PS2X* _controller, Weapon_Sys* _weapons) {
+    robot = _robot;
+    controller = _controller;
+    currentSys = Control_Sys::PS2_CONTROL;
+    irFireboi = _weapons;
+    isTurnMode = false;
   }
 
-  ~IR_Control() {}
+  Controls(Drive* _robot, IRrecv* _remote) {
+    robot = _robot;
+    remote = _remote;
+    currentSys = Control_Sys::IR_CONTROL;
+  }
+
+  ~Controls() {}
   void init();
-
-  void translateIR();
-  void elemental();
-
-  void getCMD();
-  void parseCMD(int);
-  void execCMD();
-  void irSendFire();
+  void entry();
+  void readPS2();
+  void readIR();
+  void parseInput(int);
 };
+
 #endif
