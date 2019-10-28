@@ -1,5 +1,5 @@
 #include <cpu_map.h>
-#include <Drive.h>
+//#include <Drive.h>
 
 /*
     by: DavidPurdy Oct, 22 2019
@@ -53,23 +53,26 @@ void loop() {
 
   inches = read_sonar();
 
-  if (inches < 4) {
-        leftServo.writeMicroseconds(STOP_ROT);
+  if (read_sonar() <= 4) {
+    leftServo.writeMicroseconds(STOP_ROT);
     rightServo.writeMicroseconds(STOP_ROT);
     delay(1000);
-    //robot.pivot(LEFT);
-    leftServo.writeMicroseconds(CCW_ROT);
-    rightServo.writeMicroseconds(CW_ROT);
-    Serial.println("turning");
-  }
-  else {
-    
-       //robot.drive(FORWARD);
+        while (read_sonar() <= 4) {
       rightServo.writeMicroseconds(CW_ROT);
       Serial.println("forward");
-      inches = read_sonar();
       delay(50);
+    }
 
+  }
+  else if(read_sonar()>6){
+    while (read_sonar() > 6) {
+
+      leftServo.writeMicroseconds(CCW_ROT);
+      rightServo.writeMicroseconds(CW_ROT);
+      Serial.println("turning");
+
+     delay(50);
+    }
   }
 
   delay(50);
@@ -171,3 +174,4 @@ void line_follow() {
 void line_test() {
 
 }
+
