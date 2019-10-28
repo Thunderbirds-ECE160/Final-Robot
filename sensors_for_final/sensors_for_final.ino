@@ -51,10 +51,6 @@ void setup() {
 void loop() {
   sonar_test();
   //line_test();
-<<<<<<< Updated upstream
-  //read_sonar();
-  line_follow();
-=======
 
   inches = read_sonar();
 
@@ -62,24 +58,27 @@ void loop() {
     leftServo.writeMicroseconds(STOP_ROT);
     rightServo.writeMicroseconds(STOP_ROT);
     delay(1000);
+    while (read_sonar()<=4){
     //robot.pivot(LEFT);
     leftServo.writeMicroseconds(CCW_ROT);
     rightServo.writeMicroseconds(CW_ROT);
     Serial.println("turning");
+    }
   }
   else {
-
+    leftServo.writeMicroseconds(STOP_ROT);
+    rightServo.writeMicroseconds(STOP_ROT);
     //robot.drive(FORWARD);
-    rightServo.writeMicroseconds(CW_ROT);
+    while(read_sonar()>4){
+      rightServo.writeMicroseconds(CW_ROT);
     Serial.println("forward");
     inches = read_sonar();
     delay(50);
-
+    }
   }
 
   delay(50);
   //line_follow();
->>>>>>> Stashed changes
 }
 
 //***************************************************************************************************
