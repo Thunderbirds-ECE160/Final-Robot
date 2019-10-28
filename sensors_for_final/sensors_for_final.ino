@@ -142,7 +142,8 @@ void line_follow() {
       // Dynamic check
       while (analogRead(sensorM) < (colWhite - tolerance) ||
              analogRead(sensorM) > (colWhite + tolerance)) {
-        // pivot left
+        // pivot left 
+        rightServo.writeMicroseconds(CW_ROT);
         delay(50);
       }
     }
@@ -153,6 +154,7 @@ void line_follow() {
       while (analogRead(sensorM) < (colWhite - tolerance) ||
              analogRead(sensorM) > (colWhite + tolerance)) {
         // pivot right
+        leftServo.writeMicroseconds(CCW_ROT);
         delay(50);
       }
 
@@ -163,6 +165,7 @@ void line_follow() {
       while (analogRead(sensorM) < (colWhite - tolerance) ||
              analogRead(sensorM) > (colWhite + tolerance)) {
         // pivot left
+        rightServo.writeMicroseconds(CW_ROT);
         delay(50);
       }
     }
@@ -179,6 +182,8 @@ void line_follow() {
     while (analogRead(sensorM) < (colWhite - tolerance) ||
            analogRead(sensorM) > (colWhite + tolerance)) {
       // spin left
+      leftServo.writeMicroseconds(CW_ROT);
+      rightServo.writeMicroseconds(CW_ROT);
       delay(50);
     }  
     //checking middle and right
@@ -191,11 +196,15 @@ void line_follow() {
     while (analogRead(sensorM) < (colWhite - tolerance) ||
            analogRead(sensorM) > (colWhite + tolerance)) {
       // spin right
+      leftServo.writeMicroseconds(CCW_ROT);
+      rightServo.writeMicroseconds(CCW_ROT);
       delay(50);
     }
     //Only middle sensor reads white (expected)
      else{
        //drive forward
+       leftServo.writeMicroseconds(CCW_ROT);
+       rightServo.writeMicroseconds(CW_ROT);
      }
 //delay before next check
 delay (50);
