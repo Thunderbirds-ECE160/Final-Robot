@@ -11,8 +11,8 @@
 #include <Servo.h>
 
 //****************pins to change when the robot is configured later
-#define trig 5 //pin sending signal 
-#define echo 6 //pin receiving the signal 
+#define trig 4 //pin sending signal 
+#define echo 4 //pin receiving the signal 
 #define LEFT_SERVO_PIN 12
 #define RIGHT_SERVO_PIN 13
 
@@ -27,7 +27,7 @@ Servo leftServo;
 Servo rightServo;
 
 int half = 500;
-int inches = 0; 
+int inches = 0;
 //***************pins changed when robot configured
 int sensorL = A4;
 int sensorR = A5;
@@ -46,31 +46,30 @@ void setup() {
 // void loop ****************************************************************************************
 
 void loop() {
-  sonar_test();
+  //sonar_test();
   //line_test();
 
   inches = read_sonar();
 
-  if (inches <= 4) {
+  if (read_sonar() <= 4) {
     leftServo.writeMicroseconds(STOP_ROT);
     rightServo.writeMicroseconds(STOP_ROT);
     delay(1000);
-    while (read_sonar()<=4){
-    //robot.pivot(LEFT);
-    leftServo.writeMicroseconds(CCW_ROT);
-    rightServo.writeMicroseconds(CW_ROT);
-    Serial.println("turning");
-    }
-  }
-  else {
-    leftServo.writeMicroseconds(STOP_ROT);
-    rightServo.writeMicroseconds(STOP_ROT);
-    //robot.drive(FORWARD);
-    while(read_sonar()>4){
+        while (read_sonar() <= 4) {
       rightServo.writeMicroseconds(CW_ROT);
-    Serial.println("forward");
-    inches = read_sonar();
-    delay(50);
+      Serial.println("forward");
+      delay(50);
+    }
+
+  }
+  else if(read_sonar()>6){
+    while (read_sonar() > 6) {
+
+      leftServo.writeMicroseconds(CCW_ROT);
+      rightServo.writeMicroseconds(CW_ROT);
+      Serial.println("turning");
+
+     delay(50);
     }
   }
 
@@ -82,7 +81,7 @@ void loop() {
 
 
 void sonar_test() {  //this is the function that makes the robot work based off of the sonar
- 
+
 
   read_sonar();
 
@@ -97,19 +96,19 @@ void sonar_test() {  //this is the function that makes the robot work based off 
 }
 
 
-void read_sonar() {    //Serial.prints the reading for the sonar and converts sonar reading to a long value
+int read_sonar() {    //Serial.prints the reading for the sonar and converts sonar reading to a long value
 
-pinMode(trig, OUTPUT); //sends trigger pulse
-digitalWrite(trig, LOW);
-delayMicroseconds(2);
-digitalWrite(trig, HIGH);
-delayMicroseconds(10);
-digitalWrite(trig, LOW);
-pinMode(echo, INPUT); // Reads echo pulse and converts to inches
-inches = pulseIn(echo, HIGH) / 74 / 2;
-Serial.print(inches);
-Serial.println("in");
-return inches;
+  pinMode(trig, OUTPUT); //sends trigger pulse
+  digitalWrite(trig, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig, LOW);
+  pinMode(echo, INPUT); // Reads echo pulse and converts to inches
+  inches = pulseIn(echo, HIGH) / 74 / 2;
+  Serial.print(inches);
+  Serial.println("in");
+  return inches;
 }
 
 
