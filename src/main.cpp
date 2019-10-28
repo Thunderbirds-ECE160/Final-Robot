@@ -24,16 +24,23 @@
 //#include <IR_Control.h>   //IR Controlled Driving Library (Written by David Purdy, Ported by Alex Westerman)
 //#include <IRremote.h>
 #include <Controls.h>
+#include <Weapon_Sys.h>
 /*============================================================*
  *                     VAR DECLARATIONS                       *
  *============================================================*/
+IRrecv reciever(IR_REMOTE_RECV);
+
+IRsend transmitter;
+
 //PS2 Controller Object
 PS2X ps2Boi;
 
 //Drive object with servo pinouts
 Drive robot(LEFT_SERVO_PIN, RIGHT_SERVO_PIN, GRIPPER_SERVO_PIN);
 
-Controls driveTrain(&robot, &ps2Boi);
+Weapon_Sys weapons(&reciever, &transmitter);
+
+Controls driveTrain(&robot, &ps2Boi, &weapons);
 
 //IR Reciever Object
 //IRrecv ir_reciever(IR_REMOTE_RECV);

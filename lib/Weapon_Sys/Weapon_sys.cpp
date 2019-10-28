@@ -11,13 +11,22 @@
 
 #include <cpu_map.h>
 
+
 void Weapon_Sys::init() {
   reciever->enableIRIn();
   captElement = Element::NONE;
 }
 
-void Weapon_Sys::updateLED() {
-  switch (captElement) {
+IRrecv* Weapon_Sys::getRecv(){
+    return reciever;
+}
+
+decode_results* Weapon_Sys::getResults(){
+    return &hitCode;
+}
+
+void Weapon_Sys::updateLED(int hitVal) {
+  switch (hitVal) {
     case Element::AIR:
       analogWrite(LED_GREEN, 255);
       analogWrite(LED_BLUE, 255);
@@ -55,24 +64,56 @@ void Weapon_Sys::updateLED() {
 }
 
 void Weapon_Sys::sendFireCode() {
-    // Using example code from class for now, will change implementation later
+  // Using example code from class for now, will change implementation later
   // when needed
   // Send the code 3 times. First one is often received as garbage
   for (int i = 0; i < 3; i++) {
-    transmitter->sendSony(captElement, 12);  // Transmit the code 0x5A5 signal from IR LED
+    transmitter->sendSony(Element::ROBOT_HIT,
+                          12);  // Transmit the code 0x5A5 signal from IR LED
     delay(50);
   }
   // Have to enable recievers afterward (for some reason)
-  //Delay is used as a "grace period" for the function to complete
+  // Delay is used as a "grace period" for the function to complete
   reciever->enableIRIn();
 }
 
 void Weapon_Sys::processHit() {
-    //Will just update the LED for now
-    updateLED();
-    delay(2000);
-    captElement = Element::NONE;
-    updateLED();
+  // Will just update the LED for now
+  switch (hitCode.value) {
+    case Element::AIR:
+      captElement = Element::AIR;
+      break;
+    case Element::EARTH:
+      captElement = Element::EARTH;
+      break;
+    case Element::ELECTRICITY:
+      captElement = Element::ELECTRICITY;
+      break;
+    case Element::FIRE:
+      captElement = Element::FIRE;
+      break;
+    case Element::GRASS:
+      captElement = Element::GRASS;
+      break;
+    case Element::WATER:
+      captElement = Element::WATER;
+      break;
+    case Element::ROBOT_HIT:
+      captElement = Element::ROBOT_HIT;
+      break;
+    default:
+      captElement = Element::NONE;
+      break;
+  }
+  updateLED(hitCode.value);
+  delay(2000);
+  captElement = Element::NONE;
+  updateLED(0x0);
 }
 
-void Weapon_Sys::standby() {}
+void Weapon_Sys::standby() {
+  if (reciever->decode(&hitCode)) {
+    processHit();
+    reciever->resume();
+  }
+}

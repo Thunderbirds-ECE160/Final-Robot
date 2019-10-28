@@ -14,13 +14,13 @@
 #include <cpu_map.h>
 
 void Controls::init() {
+  remote->enableIRIn();
   switch (currentSys) {
     case Control_Sys::PS2_CONTROL:
       controller->config_gamepad(PS2_CLOCK, PS2_COMMAND, PS2_ATTENTION,
                                  PS2_DATA);
       break;
     case Control_Sys::IR_CONTROL:
-      remote->enableIRIn();
       break;
     default:
       exit(1);  // Error reached, need to restart arduino
@@ -237,7 +237,7 @@ void Controls::parseInput(int cmd) {
       }
       break;
     case FIRE:
-      // TODO implement me with Weapon_Sys class
+      irFireboi->sendFireCode();
       break;
     default:
       // This is where we say the robot should not be moving
@@ -248,12 +248,17 @@ void Controls::parseInput(int cmd) {
 }
 
 void Controls::entry() {
+  if (irFireboi->getRecv()->decode(irFireboi->getResults())) {
+    irFireboi->processHit();
+    irFireboi->getRecv()->resume();
+  }
   switch (currentSys) {
     case Control_Sys::PS2_CONTROL:
       readPS2();
       break;
     case Control_Sys::IR_CONTROL:
       readIR();
+      irFireboi->standby();
       break;
     default:
       exit(1);

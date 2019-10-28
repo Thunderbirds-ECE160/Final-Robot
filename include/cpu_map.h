@@ -17,8 +17,8 @@
 
 //PS2 Controller Stuff
 #define PS2_CLOCK 10
-#define PS2_DATA 2
-#define PS2_COMMAND 8
+#define PS2_DATA 8
+#define PS2_COMMAND 11
 #define PS2_ATTENTION 7
 
 //IR Pins

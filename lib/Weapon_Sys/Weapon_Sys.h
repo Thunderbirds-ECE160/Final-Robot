@@ -14,7 +14,8 @@
  *
  *
  **************************************************************************************************************************************************/
-
+#ifndef WEAPONS_SYS_H_
+#define WEAPONS_SYS_H_
 /*============================================================*
  *                      INCLUDE THINGS                        *
  *============================================================*/
@@ -48,10 +49,13 @@ class Weapon_Sys {
     reciever = recv_;
     transmitter = send_;
   }
-  ~Weapon_Sys();
+  ~Weapon_Sys(){};
   void init();
-  void updateLED();
+  IRrecv* getRecv();
+  decode_results* getResults();
+  void updateLED(int);
   void sendFireCode();
   void processHit();
   void standby();
 };
+#endif

@@ -23,6 +23,7 @@
 #include <Drive.h>
 #include <IRremote.h>
 #include <PS2X_lib.h>
+#include <Weapon_Sys.h>
 
 /*============================================================*
  *                     VAR DECLARATIONS                       *
@@ -73,16 +74,18 @@ class Controls {
   Control_Sys currentSys;
   PS2X* controller;
   IRrecv* remote;
+  Weapon_Sys* irFireboi;
   decode_results prev_cmd;
   decode_results recv_cmd;
   int currentCMD;
   bool isTurnMode;
 
  public:
-  Controls(Drive* _robot, PS2X* _controller) {
+  Controls(Drive* _robot, PS2X* _controller, Weapon_Sys* _weapons) {
     robot = _robot;
     controller = _controller;
     currentSys = Control_Sys::PS2_CONTROL;
+    irFireboi = _weapons;
     isTurnMode = false;
   }
 
