@@ -106,8 +106,6 @@ void Weapon_Sys::processHit() {
       break;
   }
   updateLED(hitCode.value);
-  delay(2000);
-  captElement = Element::NONE;
   updateLED(0x0);
 }
 

@@ -1,4 +1,4 @@
-#include <cpu_map.h>
+//#include <cpu_map.h>
 //#include <Drive.h>
 
 /*
@@ -21,7 +21,7 @@
 #define CW_LOW_ROT 1450
 #define CCW_LOW_ROT 1550
 
-Drive robot(LEFT_SERVO_PIN, RIGHT_SERVO_PIN, GRIPPER_SERVO_PIN);
+//Drive robot(LEFT_SERVO_PIN, RIGHT_SERVO_PIN, GRIPPER_SERVO_PIN);
 
 SR04 sonar = SR04(echo, trig);  // sonar pins 1st recieves then 2nd sends
 Servo leftServo;
@@ -49,21 +49,21 @@ int sensorM = A6;
 //***************************************************************************************************
 
 void sonar_test() {  // this is the function that makes the robot work based off
-                     // of the sonar
+  // of the sonar
 
   inches = read_sonar();
 
   if (inches < 4) {
-    robot.pivot(LEFT);
+    //    robot.pivot(LEFT);
     Serial.println("turning");
   } else {
-    robot.drive(FORWARD);
+    //    robot.drive(FORWARD);
     Serial.println("forward");
   }
 }
 
 int read_sonar() {  // Serial.prints the reading for the sonar and converts
-                    // sonar reading to a long value
+  // sonar reading to a long value
   int val = 0;
   pinMode(trig, OUTPUT);  // sends trigger pulse
   digitalWrite(trig, LOW);
@@ -79,12 +79,12 @@ int read_sonar() {  // Serial.prints the reading for the sonar and converts
   return val;
 }
 
-int doAverage(*int[] data) {
+int doAvg(int data[]) {
   int avg = 0;
-  for (int x = 0; x < sizeof(*data) / sizeof(*data[0]); x++) {
-    avg = *data[x] + avg;
+  for (int x = 0; x < sizeof(data) / sizeof(data[0]); x++) {
+    avg = *(data + x) + avg;
   }
-  avg = avg / (sizeof(*data) / sizeof(*data[0]));
+  avg = avg / (sizeof(data) / sizeof(data[0]));
   return avg;
 }
 
@@ -101,7 +101,7 @@ void line_follow() {
     leftData[x] = analogRead(sensorL);
   }
   // do the average
-  int leftAvg = doAverage(&leftData);
+  int leftAvg = doAvg(leftData);
 
   // Calibrating the right sensor
   //===============================
@@ -110,7 +110,7 @@ void line_follow() {
     rightData[x] = analogRead(sensorR);
   }
   // do the average
-  int rightAvg = doAverage(&rightData);
+  int rightAvg = doAvg(rightData);
 
   // Calibrating the middle sensor
   //===============================
@@ -119,40 +119,35 @@ void line_follow() {
     middleData[x] = analogRead(sensorM);
   }
   // do the average
-  int middleAvg = doAverage(&middleData);
+  int middleAvg = doAvg(middleData);
 
   // Set corresponding values
-  colBlack = (leftData + rightData) / 2;
+  colBlack = (leftAvg + rightAvg) / 2;
   colWhite = middleAvg;
 
   int drive = 0;
   // Optimizing conditionals here
 
   // If the middle sensor does not read white within tolerance
-  if (analogRead(sensorM) < (colWhite - tolerance) ||
-      analogRead(sensorM) > (colWhite + tolerance)) {
+  if (analogRead(sensorM) < (colWhite - tolerance) || analogRead(sensorM) > (colWhite + tolerance)) {
     // Stop
     leftServo.writeMicroseconds(STOP_ROT);
     rightServo.writeMicroseconds(STOP_ROT);
     delay(50);
     // See which sensor has a value closer to white
     // Check the left sensor first
-    if (analogRead(sensorL) < (colWhite + tolerance) &&
-        analogRead(sensorL) > (colWhite - tolerance)) {
+    if (analogRead(sensorL) < (colWhite + tolerance) && analogRead(sensorL) > (colWhite - tolerance)) {
       // Dynamic check
-      while (analogRead(sensorM) < (colWhite - tolerance) ||
-             analogRead(sensorM) > (colWhite + tolerance)) {
-        // pivot left 
+      while (analogRead(sensorM) < (colWhite - tolerance) || analogRead(sensorM) > (colWhite + tolerance)) {
+        // pivot left
         rightServo.writeMicroseconds(CW_ROT);
         delay(50);
       }
     }
     // otherwise check ther right
-    else if (analogRead(sensorR) < (colWhite + tolerance) &&
-             analogRead(sensorR) > (colWhite - tolerance)) {
+    else if (analogRead(sensorR) < (colWhite + tolerance) && analogRead(sensorR) > (colWhite - tolerance)) {
       // Dynamic check
-      while (analogRead(sensorM) < (colWhite - tolerance) ||
-             analogRead(sensorM) > (colWhite + tolerance)) {
+      while (analogRead(sensorM) < (colWhite - tolerance) || analogRead(sensorM) > (colWhite + tolerance)) {
         // pivot right
         leftServo.writeMicroseconds(CCW_ROT);
         delay(50);
@@ -162,8 +157,7 @@ void line_follow() {
     // Default condition: pivot left
     else {
       // Dynamic check
-      while (analogRead(sensorM) < (colWhite - tolerance) ||
-             analogRead(sensorM) > (colWhite + tolerance)) {
+      while (analogRead(sensorM) < (colWhite - tolerance) || analogRead(sensorM) > (colWhite + tolerance)) {
         // pivot left
         rightServo.writeMicroseconds(CW_ROT);
         delay(50);
@@ -173,110 +167,102 @@ void line_follow() {
 
   // Check if the middle and the left or right sensor both read white
   // Checking left and middle
-  else if ((analogRead(sensorM) < (colWhite + tolerance) &&
-            analogRead(sensorM) > (colWhite - tolerance)) &&
-           (analogRead(sensorL) < (colWhite + tolerance) &&
-            analogRead(sensorL) > (colWhite - tolerance))) {
+  else if ((analogRead(sensorM) < (colWhite + tolerance) &&            analogRead(sensorM) > (colWhite - tolerance)) &&           (analogRead(sensorL) < (colWhite + tolerance) &&            analogRead(sensorL) > (colWhite - tolerance))) {
     // Do an initial spin (leftwards) for 50ms (calibrate vals)
     // dynamic check
-    while (analogRead(sensorM) < (colWhite - tolerance) ||
-           analogRead(sensorM) > (colWhite + tolerance)) {
+    while (analogRead(sensorM) < (colWhite - tolerance) ||           analogRead(sensorM) > (colWhite + tolerance)) {
       // spin left
       leftServo.writeMicroseconds(CW_ROT);
       rightServo.writeMicroseconds(CW_ROT);
       delay(50);
-    }  
+    }}
     //checking middle and right
-    else if ((analogRead(sensorM) < (colWhite + tolerance) &&
-            analogRead(sensorM) > (colWhite - tolerance)) &&
-           (analogRead(sensorR) < (colWhite + tolerance) &&
-            analogRead(sensorR) > (colWhite - tolerance))) {
-    // Do an initial spin (rightwards) for 50ms (calibrate vals)
-    // dynamic check
-    while (analogRead(sensorM) < (colWhite - tolerance) ||
-           analogRead(sensorM) > (colWhite + tolerance)) {
-      // spin right
+    else if ((analogRead(sensorM) < (colWhite + tolerance) &&              analogRead(sensorM) > (colWhite - tolerance)) &&             (analogRead(sensorR) < (colWhite + tolerance) &&              analogRead(sensorR) > (colWhite - tolerance))) {
+      // Do an initial spin (rightwards) for 50ms (calibrate vals)
+      // dynamic check
+      while (analogRead(sensorM) < (colWhite - tolerance) ||             analogRead(sensorM) > (colWhite + tolerance)) {
+        // spin right
+        leftServo.writeMicroseconds(CCW_ROT);
+        rightServo.writeMicroseconds(CCW_ROT);
+        delay(50);
+      }}  else {
+        //Only middle sensor reads white (expected)
+      
+      //drive forward
       leftServo.writeMicroseconds(CCW_ROT);
-      rightServo.writeMicroseconds(CCW_ROT);
-      delay(50);
+      rightServo.writeMicroseconds(CW_ROT);
     }
-    //Only middle sensor reads white (expected)
-     else{
-       //drive forward
-       leftServo.writeMicroseconds(CCW_ROT);
-       rightServo.writeMicroseconds(CW_ROT);
-     }
-//delay before next check
-delay (50);
+    //delay before next check
+    delay (50);
 
-/*
-    if (analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
-        analogRead(sensorR) > 850)  // left and right reading black and middle
-                                    // reading white, go forward
-    {
-      drive = 1
-    } else if (analogRead(sensorL) > 850 && analogRead(sensorM) > 850 &&
-               analogRead(sensorR) <
-                   600)  // left and middle reading black turn right
-    {
-      while (true) {
-        // pivot right;
+    /*
+        if (analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
+            analogRead(sensorR) > 850)  // left and right reading black and middle
+                                        // reading white, go forward
+        {
+          drive = 1
+        } else if (analogRead(sensorL) > 850 && analogRead(sensorM) > 850 &&
+                   analogRead(sensorR) <
+                       600)  // left and middle reading black turn right
+        {
+          while (true) {
+            // pivot right;
 
-        if ((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
-             analogRead(sensorR) > 850) ||
-            (analogRead(sensorL) < 600 && analogRead(sensorM) < 600 &&
-             analogRead(sensorR) > 850)) {
-          break;  // break if left and right sensor are reading black and middle
-                  // sensor is reading white
-        }
-      }
-    } else if (analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
-               analogRead(sensorR) < 600)  // if the middle and right sensor
-                                           // read white, pivot right
-    {
-      while (true) {
-        // pivotright;
-        if ((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
-                 analogRead(sensorR) > 850 ||
-             analogRead(sensorL) < 600 && analogRead(sensorM) > 850 &&
-                 analogRead(sensorR) < 650)) {
-          break;  // break if left and right sensor reading black and middle
-                  // sensor is reading white
-        }
-      }
-    } else if (analogRead(sensorL) < 600 && analogRead(sensorM) > 850 &&
-               analogRead(sensorR) > 850)  // if middle and right sensor are
-                                           // reading black pivot left
-    {
-      while (true) {
-        // pivot left;
-        if ((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
-             analogRead(sensorR) > 850) ||
-            (analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
-             analogRead(sensorR) < 600)) {
-          break;
-        }
-      }
-    } else if (analogRead(sensorL) < 600 && analogRead(sensorM) < 600 &&
-               analogRead(sensorR) >
-                   850)  // if the left and middle sensor read white pivot left
-    {
-      while (true) {
-        // pivot left;
-        if (((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
-              analogRead(sensorR) > 850) ||
-             analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
-                 analogRead(sensorR) < 600)) {
-          {
-            break;  // break if left and right sensor are reading black and
-                    // middle sensor is reading white
+            if ((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
+                 analogRead(sensorR) > 850) ||
+                (analogRead(sensorL) < 600 && analogRead(sensorM) < 600 &&
+                 analogRead(sensorR) > 850)) {
+              break;  // break if left and right sensor are reading black and middle
+                      // sensor is reading white
+            }
           }
-        }
-      }
-      // else
-      //{
-      // move forward // if no line is detected move forward
-    }*/
+        } else if (analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
+                   analogRead(sensorR) < 600)  // if the middle and right sensor
+                                               // read white, pivot right
+        {
+          while (true) {
+            // pivotright;
+            if ((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
+                     analogRead(sensorR) > 850 ||
+                 analogRead(sensorL) < 600 && analogRead(sensorM) > 850 &&
+                     analogRead(sensorR) < 650)) {
+              break;  // break if left and right sensor reading black and middle
+                      // sensor is reading white
+            }
+          }
+        } else if (analogRead(sensorL) < 600 && analogRead(sensorM) > 850 &&
+                   analogRead(sensorR) > 850)  // if middle and right sensor are
+                                               // reading black pivot left
+        {
+          while (true) {
+            // pivot left;
+            if ((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
+                 analogRead(sensorR) > 850) ||
+                (analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
+                 analogRead(sensorR) < 600)) {
+              break;
+            }
+          }
+        } else if (analogRead(sensorL) < 600 && analogRead(sensorM) < 600 &&
+                   analogRead(sensorR) >
+                       850)  // if the left and middle sensor read white pivot left
+        {
+          while (true) {
+            // pivot left;
+            if (((analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
+                  analogRead(sensorR) > 850) ||
+                 analogRead(sensorL) > 850 && analogRead(sensorM) < 600 &&
+                     analogRead(sensorR) < 600)) {
+              {
+                break;  // break if left and right sensor are reading black and
+                        // middle sensor is reading white
+              }
+            }
+          }
+          // else
+          //{
+          // move forward // if no line is detected move forward
+        }*/
   }
 
   void line_test() {}
@@ -297,9 +283,9 @@ delay (50);
     // sonar_test();
     // line_test();
 
-    inches = read_sonar();
+    /*inches = read_sonar();
 
-    if (read_sonar() <= 4) {
+      if (read_sonar() <= 4) {
       leftServo.writeMicroseconds(STOP_ROT);
       rightServo.writeMicroseconds(STOP_ROT);
       delay(1000);
@@ -309,7 +295,7 @@ delay (50);
         delay(50);
       }
 
-    } else if (read_sonar() > 6) {
+      } else if (read_sonar() > 6) {
       while (read_sonar() > 6) {
         leftServo.writeMicroseconds(CCW_ROT);
         rightServo.writeMicroseconds(CW_ROT);
@@ -317,8 +303,9 @@ delay (50);
 
         delay(50);
       }
-    }
+      }
 
-    delay(50);
-    // line_follow();
+      delay(50);
+    */
+    line_follow();
   }
