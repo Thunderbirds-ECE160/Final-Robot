@@ -1,16 +1,24 @@
+#include <boarddefs.h>
+#include <IRremote.h>
+#include <IRremoteInt.h>
+#include <ir_Lego_PF_BitStreamEncoder.h>
+
+
+
 //#include <cpu_map.h>
 //#include <Drive.h>
 /*
     by: DavidPurdy Oct, 22 2019
-Modified by Alex W. and Josh R. 
+Modified by Alex W. and Josh R.
 ******************************************************************************************/
 
 #include <SR04.h>
 #include <Servo.h>
 
+
 //****************pins to change when the robot is configured later
-#define trig 4  // pin sending signal
-#define echo 4  // pin receiving the signal
+#define trig 2  // pin sending signal
+#define echo 2  // pin receiving the signal
 #define LEFT_SERVO_PIN 12
 #define RIGHT_SERVO_PIN 13
 
@@ -20,13 +28,23 @@ Modified by Alex W. and Josh R.
 #define CW_LOW_ROT 1450
 #define CCW_LOW_ROT 1550
 
+unsigned long offTime = 0;
+
+IRrecv reciever(4);
+decode_results hitCode;
+
+int LED_GREEN = 6;
+int LED_BLUE = 5;
+int LED_RED = 9;
+
 // Drive robot(LEFT_SERVO_PIN, RIGHT_SERVO_PIN, GRIPPER_SERVO_PIN);
 
 SR04 sonar = SR04(echo, trig);  // sonar pins 1st recieves then 2nd sends
 Servo leftServo;
 Servo rightServo;
+int halfTime = 0;
 
-int half = 500;//time in sec
+int half = 500;  // time in sec
 int inches = 0;
 
 // Color Storage
@@ -48,6 +66,57 @@ int sensorM = 17;
 int lastTurn = 0;
 
 //***************************************************************************************************
+
+void updateLED(int hitVal) {
+  switch (hitVal) {
+    case 0xA19:
+      analogWrite(LED_GREEN, 255);
+      analogWrite(LED_BLUE, 255);
+      analogWrite(LED_RED, 255);
+      break;
+    case 0xEA9:
+      analogWrite(LED_RED, 128);
+      analogWrite(LED_GREEN, 20);
+      analogWrite(LED_BLUE, 128);
+      break;
+    case 0xE1E:
+      analogWrite(LED_RED, 255);
+      analogWrite(LED_GREEN, 255);
+      break;
+    case 0xF19:
+      analogWrite(LED_RED, 255);
+      analogWrite(LED_GREEN, 55);
+      break;
+    case 0xC9A:
+      analogWrite(LED_GREEN, 255);
+      break;
+    case 0xB13:
+      analogWrite(LED_GREEN, 64);
+      analogWrite(LED_BLUE, 128);
+      break;
+    case 0x5A5:
+      analogWrite(LED_RED, 255);
+      break;
+    case 0x0:
+      digitalWrite(LED_BLUE, LOW);
+      digitalWrite(LED_RED, LOW);
+      digitalWrite(LED_GREEN, LOW);
+      break;
+  }
+  offTime = millis() + 2000;
+}
+
+void standby() {
+  if (reciever.decode(&hitCode)) {
+    updateLED(hitCode.value);
+    reciever.resume();
+  }
+  if (millis() > offTime) {
+    digitalWrite(LED_BLUE, LOW);
+    digitalWrite(LED_RED, LOW);
+    digitalWrite(LED_GREEN, LOW);
+  }}
+
 
 void sonar_test() {  // this is the function that makes the robot work based off
   // of the sonar
@@ -91,57 +160,77 @@ int doAvg(int data[]) {
 
 //***********************************************************************************************************
 void line_follow() {
-  // Do some calibration
-    // Left and right sensors should return a value for black
-    // Middle sensor should return a value for white
-    // We will collect 5 sample from each sensor and then average as needed
+  /*// Do some calibration
+  // Left and right sensors should return a value for black
+  // Middle sensor should return a value for white
+  // We will collect 5 sample from each sensor and then average as needed
 
-    // Calibrating the left sensor
-    //===============================
-    // Collect data
-    for (int x = 0; x < 5; x++) {
+  // Calibrating the left sensor
+  //===============================
+  // Collect data
+  for (int x = 0; x < 5; x++) {
     leftData[x] = analogRead(sensorL);
-    }
-    // do the average
-    int leftAvg = doAvg(leftData);
+  }
+  // do the average
+  int leftAvg = doAvg(leftData);
 
-    // Calibrating the right sensor
-    //===============================
-    // Collect data
-    for (int x = 0; x < 5; x++) {
+  // Calibrating the right sensor
+  //===============================
+  // Collect data
+  for (int x = 0; x < 5; x++) {
     rightData[x] = analogRead(sensorR);
-    }
-    // do the average
-    int rightAvg = doAvg(rightData);
+  }
+  // do the average
+  int rightAvg = doAvg(rightData);
 
-    // Calibrating the middle sensor
-    //===============================
-    // Collect data
-    for (int x = 0; x < 5; x++) {
+  // Calibrating the middle sensor
+  //===============================
+  // Collect data
+  for (int x = 0; x < 5; x++) {
     middleData[x] = analogRead(sensorM);
-    }
-    // do the average
-    int middleAvg = doAvg(middleData);
+  }
+  // do the average
+  int middleAvg = doAvg(middleData);
 
-    // Set corresponding values
-    colBlack = (leftAvg + rightAvg) / 2;
-    colWhite = middleAvg;
+  // Set corresponding values
+  colBlack = (leftAvg + rightAvg) / 2;
+  colWhite = middleAvg;
+*/
+  int drive = 0;
+  // Optimizing conditionals here
 
-    int drive = 0;
-    // Optimizing conditionals here
-
-    
-  if (analogRead(sensorL) > ( colBlack - tolerance) && analogRead(sensorM) < (colWhite + tolerance) && analogRead(sensorR) > (colBlack - tolerance)) {
+  if (analogRead(sensorL) > (colBlack - tolerance) &&
+      analogRead(sensorM) < (colWhite + tolerance) &&
+      analogRead(sensorR) > (colBlack - tolerance)) {
     leftServo.writeMicroseconds(CCW_ROT);
     rightServo.writeMicroseconds(CW_ROT);
-  } else if (analogRead(sensorL) < (colWhite + tolerance) && analogRead(sensorM) > ( colBlack - tolerance) && analogRead(sensorR) > (colBlack - tolerance)) {
+  } else if (analogRead(sensorL) < (colWhite + tolerance) &&
+             analogRead(sensorM) > (colBlack - tolerance) &&
+             analogRead(sensorR) > (colBlack - tolerance)) {
     leftServo.writeMicroseconds(CW_ROT);
     rightServo.writeMicroseconds(CW_ROT);
-  } else   if (analogRead(sensorL) > ( colBlack - tolerance) && analogRead(sensorM) > ( colBlack - tolerance)  && analogRead(sensorR) < (colWhite + tolerance)) {
+  } else if (analogRead(sensorL) > (colBlack - tolerance) &&
+             analogRead(sensorM) > (colBlack - tolerance) &&
+             analogRead(sensorR) < (colWhite + tolerance)) {
     leftServo.writeMicroseconds(CCW_ROT);
     rightServo.writeMicroseconds(CCW_ROT);
   }
+  // Add a "fallback" assuming that if all the sensors read black, spin 180
+  // degees
+  else if (analogRead(sensorL) > (colBlack - tolerance) &&
+           analogRead(sensorM) > (colBlack - tolerance) &&
+           analogRead(sensorR) < (colWhite + tolerance)) {
+      //Honestly, it does not matter which direction we rotate, just that we do an approximate rotation
+      leftServo.writeMicroseconds(CW_ROT);
+      rightServo.writeMicroseconds(CW_ROT);
+      //Fixed delay
+      delay(1000);
+      //stop rotation
+      leftServo.writeMicroseconds(STOP_ROT);
+      rightServo.writeMicroseconds(STOP_ROT);
+  }
   delay(10);
+  standby();
 }
 
 //****************************************************************************************************************
@@ -151,6 +240,7 @@ void setup() {
   leftServo.attach(LEFT_SERVO_PIN);
   rightServo.attach(RIGHT_SERVO_PIN);
   // robot.attachServos();
+  reciever.enableIRIn();
 }
 
 //
@@ -158,9 +248,9 @@ void setup() {
 
 void loop() {
   // sonar_test();
-  inches = read_sonar();
+ /*inches = read_sonar();
 
-    if (read_sonar() <= 4) {
+  if (read_sonar() <= 4) {
     leftServo.writeMicroseconds(STOP_ROT);
     rightServo.writeMicroseconds(STOP_ROT);
     delay(1000);
@@ -170,7 +260,7 @@ void loop() {
       delay(50);
     }
 
-    } else if (read_sonar() > 6) {
+  } else if (read_sonar() > 6) {
     while (read_sonar() > 6) {
       leftServo.writeMicroseconds(CCW_ROT);
       rightServo.writeMicroseconds(CW_ROT);
@@ -178,24 +268,22 @@ void loop() {
 
       delay(50);
     }
-    }
+  }*/
 
-    delay(50);
-  
+  delay(50);
+
   line_follow();
 }
 
 //*****************************************************************************************************************
 
-
-
-//this is for testing purposes only; checks if color values are correct
-void colorRead(){     
+/*// this is for testing purposes only; checks if color values are correct
+void colorRead() {
   Serial.print(analogRead(17));
-Serial.println("M");
-Serial.print(analogRead(16));
-Serial.println("L");
-Serial.println(analogRead(15));
-Serial.println("   ");
-delay(1000);
-}
+  Serial.println("M");
+  Serial.print(analogRead(16));
+  Serial.println("L");
+  Serial.println(analogRead(15));
+  Serial.println("   ");
+  delay(1000);
+}*/
