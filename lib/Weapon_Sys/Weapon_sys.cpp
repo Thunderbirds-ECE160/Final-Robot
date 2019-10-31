@@ -7,22 +7,21 @@
  * This file implements the class prototype(s) defined in Weapon_Sys.h
  **************************************************************************************************************************************************/
 
-#include "Weapon_Sys.h"
-
 #include <cpu_map.h>
 
+#include "Weapon_Sys.h"
 
 void Weapon_Sys::init() {
   reciever->enableIRIn();
   captElement = Element::NONE;
 }
 
-IRrecv* Weapon_Sys::getRecv(){
-    return reciever;
+IRrecv* Weapon_Sys::getRecv() {
+  return reciever;
 }
 
-decode_results* Weapon_Sys::getResults(){
-    return &hitCode;
+decode_results* Weapon_Sys::getResults() {
+  return &hitCode;
 }
 
 void Weapon_Sys::updateLED(int hitVal) {
@@ -61,6 +60,7 @@ void Weapon_Sys::updateLED(int hitVal) {
       digitalWrite(LED_GREEN, LOW);
       break;
   }
+  offTime = millis() + 2000;
 }
 
 void Weapon_Sys::sendFireCode() {
@@ -106,8 +106,6 @@ void Weapon_Sys::processHit() {
       break;
   }
   updateLED(hitCode.value);
-  delay(2000);
-  captElement = Element::NONE;
   updateLED(0x0);
 }
 
@@ -115,5 +113,10 @@ void Weapon_Sys::standby() {
   if (reciever->decode(&hitCode)) {
     processHit();
     reciever->resume();
+  }
+  if (millis() > offTime) {
+    digitalWrite(LED_BLUE, LOW);
+    digitalWrite(LED_RED, LOW);
+    digitalWrite(LED_GREEN, LOW);
   }
 }

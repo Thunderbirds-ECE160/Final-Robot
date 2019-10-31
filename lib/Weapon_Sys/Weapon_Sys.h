@@ -43,6 +43,7 @@ class Weapon_Sys {
   IRsend* transmitter;
   Element captElement;
   decode_results hitCode;
+  unsigned long offTime = 0;
 
  public:
   Weapon_Sys(IRrecv* recv_, IRsend* send_) {
