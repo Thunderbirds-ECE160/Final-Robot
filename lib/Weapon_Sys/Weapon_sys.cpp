@@ -7,18 +7,22 @@
  * This file implements the class prototype(s) defined in Weapon_Sys.h
  **************************************************************************************************************************************************/
 
-#include "Weapon_Sys.h"
-
 #include <cpu_map.h>
+
+#include "Weapon_Sys.h"
 
 void Weapon_Sys::init() {
   reciever->enableIRIn();
   captElement = Element::NONE;
 }
 
-IRrecv* Weapon_Sys::getRecv() { return reciever; }
+IRrecv* Weapon_Sys::getRecv() {
+  return reciever;
+}
 
-decode_results* Weapon_Sys::getResults() { return &hitCode; }
+decode_results* Weapon_Sys::getResults() {
+  return &hitCode;
+}
 
 void Weapon_Sys::updateLED(int hitVal) {
   switch (hitVal) {

@@ -1,9 +1,7 @@
-#include <boarddefs.h>
 #include <IRremote.h>
 #include <IRremoteInt.h>
+#include <boarddefs.h>
 #include <ir_Lego_PF_BitStreamEncoder.h>
-
-
 
 //#include <cpu_map.h>
 //#include <Drive.h>
@@ -15,10 +13,9 @@ Modified by Alex W. and Josh R.
 #include <SR04.h>
 #include <Servo.h>
 
-
 //****************pins to change when the robot is configured later
-#define trig 2  // pin sending signal
-#define echo 2  // pin receiving the signal
+#define trig 4  // pin sending signal
+#define echo 4  // pin receiving the signal
 #define LEFT_SERVO_PIN 12
 #define RIGHT_SERVO_PIN 13
 
@@ -42,6 +39,7 @@ int LED_RED = 9;
 SR04 sonar = SR04(echo, trig);  // sonar pins 1st recieves then 2nd sends
 Servo leftServo;
 Servo rightServo;
+Servo gripper;
 int halfTime = 0;
 
 int half = 500;  // time in sec
@@ -109,14 +107,21 @@ void updateLED(int hitVal) {
 void standby() {
   if (reciever.decode(&hitCode)) {
     updateLED(hitCode.value);
+    leftServo.writeMicroseconds(CW_ROT);
+    rightServo.writeMicroseconds(CW_ROT);
+    // Fixed delay
+    delay(500);
+    // stop rotation
+    leftServo.writeMicroseconds(STOP_ROT);
+    rightServo.writeMicroseconds(STOP_ROT);
     reciever.resume();
   }
   if (millis() > offTime) {
     digitalWrite(LED_BLUE, LOW);
     digitalWrite(LED_RED, LOW);
     digitalWrite(LED_GREEN, LOW);
-  }}
-
+  }
+}
 
 void sonar_test() {  // this is the function that makes the robot work based off
   // of the sonar
@@ -143,7 +148,7 @@ int read_sonar() {  // Serial.prints the reading for the sonar and converts
   digitalWrite(trig, LOW);
   pinMode(echo, INPUT);  // Reads echo pulse and converts to inches
   val = pulseIn(echo, HIGH) / 74 / 2;
-  Serial.print(inches);
+  Serial.print(val);
   Serial.println("in");
   delay(half);
   return val;
@@ -160,7 +165,7 @@ int doAvg(int data[]) {
 
 //***********************************************************************************************************
 void line_follow() {
-  /*// Do some calibration
+  // Do some calibration
   // Left and right sensors should return a value for black
   // Middle sensor should return a value for white
   // We will collect 5 sample from each sensor and then average as needed
@@ -195,7 +200,7 @@ void line_follow() {
   // Set corresponding values
   colBlack = (leftAvg + rightAvg) / 2;
   colWhite = middleAvg;
-*/
+
   int drive = 0;
   // Optimizing conditionals here
 
@@ -220,14 +225,15 @@ void line_follow() {
   else if (analogRead(sensorL) > (colBlack - tolerance) &&
            analogRead(sensorM) > (colBlack - tolerance) &&
            analogRead(sensorR) < (colWhite + tolerance)) {
-      //Honestly, it does not matter which direction we rotate, just that we do an approximate rotation
-      leftServo.writeMicroseconds(CW_ROT);
-      rightServo.writeMicroseconds(CW_ROT);
-      //Fixed delay
-      delay(1000);
-      //stop rotation
-      leftServo.writeMicroseconds(STOP_ROT);
-      rightServo.writeMicroseconds(STOP_ROT);
+    // Honestly, it does not matter which direction we rotate, just that we do
+    // an approximate rotation
+    leftServo.writeMicroseconds(CW_ROT);
+    rightServo.writeMicroseconds(CW_ROT);
+    // Fixed delay
+    delay(500);
+    // stop rotation
+    leftServo.writeMicroseconds(STOP_ROT);
+    rightServo.writeMicroseconds(STOP_ROT);
   }
   delay(10);
   standby();
@@ -239,8 +245,11 @@ void setup() {
   Serial.begin(9600);
   leftServo.attach(LEFT_SERVO_PIN);
   rightServo.attach(RIGHT_SERVO_PIN);
+  gripper.attach(11);
   // robot.attachServos();
   reciever.enableIRIn();
+
+  gripper.write(180);
 }
 
 //
@@ -248,16 +257,15 @@ void setup() {
 
 void loop() {
   // sonar_test();
- /*inches = read_sonar();
 
-  if (read_sonar() <= 4) {
+  if (read_sonar() <= 6) {
     leftServo.writeMicroseconds(STOP_ROT);
     rightServo.writeMicroseconds(STOP_ROT);
-    delay(1000);
-    while (read_sonar() <= 4) {
+    delay(10);
+    while (read_sonar() <= 6) {
       rightServo.writeMicroseconds(CW_ROT);
       Serial.println("forward");
-      delay(50);
+      delay(10);
     }
 
   } else if (read_sonar() > 6) {
@@ -266,13 +274,13 @@ void loop() {
       rightServo.writeMicroseconds(CW_ROT);
       Serial.println("turning");
 
-      delay(50);
+      delay(10);
     }
-  }*/
+  }
 
-  delay(50);
+  delay(10);
 
-  line_follow();
+  // line_follow();
 }
 
 //*****************************************************************************************************************
