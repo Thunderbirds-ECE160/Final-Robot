@@ -14,8 +14,8 @@ Modified by Alex W. and Josh R.
 #include <Servo.h>
 
 //****************pins to change when the robot is configured later
-#define trig 4  // pin sending signal
-#define echo 4  // pin receiving the signal
+#define trig 2  // pin sending signal
+#define echo 2  // pin receiving the signal
 #define LEFT_SERVO_PIN 12
 #define RIGHT_SERVO_PIN 13
 
