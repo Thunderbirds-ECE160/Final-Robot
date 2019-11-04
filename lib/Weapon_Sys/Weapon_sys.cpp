@@ -56,7 +56,7 @@ void Weapon_Sys::updateLED(int hitVal) {
       break;
     case Element::NONE:
       digitalWrite(LED_BLUE, LOW);
-      digitalWrite(LED_RED, LOW);b
+      digitalWrite(LED_RED, LOW);
       digitalWrite(LED_GREEN, LOW);
       break;
   }

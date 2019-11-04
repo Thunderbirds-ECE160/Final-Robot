@@ -32,4 +32,11 @@
 #define LED_GREEN 6
 #define LED_BLUE 5
 
+#define LINE_SEN_L 16
+#define LINE_SEN_R 15
+#define LINE_SEN_M 17
+
+#define SONAR_ECHO 4
+#define SONAR_TRIG 4
+
 #endif
