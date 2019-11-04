@@ -14,6 +14,7 @@
 
 #include "Auto_Sys.h"
 
+
 void Auto_Sys::init() {
   // Assume drive train is already inited
   // Assume that weaponssystem is already inited
@@ -66,13 +67,25 @@ void Auto_Sys::checkSonar() {
   // debugging
   Serial.print(val);
   Serial.println("in");
-  
-  //prevent crash oh no
+
+  // prevent crash oh no
   if (val < 6) {
     while (val < 6) {
       robot->stop();
     }
   }
+  delay(10);
+}
 
-
+void Auto_Sys::doAutonomous() {
+  // 45 second timer
+  unsigned long stoptime = millis() + 45000;
+  while (millis() < stoptime) {
+    lineFollowing();
+    checkSonar();
+    if (irSys->getRecv()->decode(irSys->getResults())) {
+      irSys->processHit();
+      irSys->getRecv()->resume();
+    }
+  }
 }

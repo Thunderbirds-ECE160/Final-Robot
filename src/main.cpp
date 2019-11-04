@@ -19,14 +19,15 @@
 /*============================================================*
  *                      INCLUDE THINGS                        *
  *============================================================*/
-#include <Arduino.h>   //The Standard Arduino Library
+#include <Arduino.h>  //The Standard Arduino Library
+#include <Auto_Sys.h>
 #include <Drive.h>     //Robot Driving Library (Written by Alex Westerman)
 #include <PS2X_lib.h>  //PS2 Controller Interface Library (Written by Bill Porter - http://http://www.billporter.info/2010/06/05/playstation-2-controller-arduino-library-v1-0/)
 
 #include "cpu_map.h"  //Contains pin definitions for the robot
 
 //#include <IR_Control.h>   //IR Controlled Driving Library (Written by David
-//Purdy, Ported by Alex Westerman) #include <IRremote.h>
+// Purdy, Ported by Alex Westerman) #include <IRremote.h>
 #include <Controls.h>
 #include <Weapon_Sys.h>
 /*============================================================*
@@ -43,6 +44,7 @@ PS2X ps2Boi;
 Drive robot(LEFT_SERVO_PIN, RIGHT_SERVO_PIN, GRIPPER_SERVO_PIN);
 
 Weapon_Sys weapons(&reciever, &transmitter);
+Auto_Sys autonomous(&weapons, &robot);
 
 Controls driveTrain(&robot, &ps2Boi, &weapons);
 
@@ -63,8 +65,13 @@ void setup() {
   pinMode(LED_RED, OUTPUT);
   pinMode(LED_BLUE, OUTPUT);
 
-  // ir_Drive.init();
-
+  robot.attachServos();
+  weapons.init();
+  // Shell function for initializing autonomous
+  // autonomous.init();
+  autonomous.doAutonomous();
+  delay(10);
+  // Move to manual
   driveTrain.init();
 }
 

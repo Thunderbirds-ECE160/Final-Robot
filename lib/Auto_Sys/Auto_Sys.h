@@ -22,7 +22,6 @@
  *============================================================*/
 #include <Drive.h>
 #include <IRremote.h>
-#include <SR04.h>
 #include <Weapon_Sys.h>
 
 /*============================================================*
@@ -38,19 +37,18 @@
 class Auto_Sys {
  private:
   // Calibration variables for line following
-  int colBlack = 0;
-  int colWhite = 0;
+  int colBlack = 850;
+  int colWhite = 650;
 
   // pointer vars for Weapon_Sys, Drive, and a Sonar
   Weapon_Sys* irSys;
   Drive* robot;
-  SR04* sonar;
+
 
  public:
-  Auto_Sys(Weapon_Sys* _irSys, Drive* _robot, SR04* _sonar) {
+  Auto_Sys(Weapon_Sys* _irSys, Drive* _robot) {
     irSys = _irSys;
     robot = _robot;
-    sonar = _sonar;
   }
 
   ~Auto_Sys() {}

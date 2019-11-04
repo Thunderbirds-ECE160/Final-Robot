@@ -14,7 +14,6 @@
 #include <cpu_map.h>
 
 void Controls::init() {
-  remote->enableIRIn();
   switch (currentSys) {
     case Control_Sys::PS2_CONTROL:
       controller->config_gamepad(PS2_CLOCK, PS2_COMMAND, PS2_ATTENTION,
@@ -26,7 +25,7 @@ void Controls::init() {
       exit(1);  // Error reached, need to restart arduino
       break;
   }
-  robot->attachServos();
+ // robot->attachServos();
 }
 
 void Controls::readPS2() {
