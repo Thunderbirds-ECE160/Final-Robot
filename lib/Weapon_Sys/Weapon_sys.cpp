@@ -60,7 +60,7 @@ void Weapon_Sys::updateLED(int hitVal) {
       digitalWrite(LED_GREEN, LOW);
       break;
   }
-  offTime = millis() + 2000;
+  offTime = millis() + 5000;
 }
 
 void Weapon_Sys::sendFireCode() {
@@ -114,7 +114,7 @@ void Weapon_Sys::standby() {
     processHit();
     reciever->resume();
   }
-  if (millis() > offTime) {
+  if (millis() >= offTime) {
     digitalWrite(LED_BLUE, LOW);
     digitalWrite(LED_RED, LOW);
     digitalWrite(LED_GREEN, LOW);

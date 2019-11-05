@@ -14,7 +14,6 @@
 
 #include "Auto_Sys.h"
 
-
 void Auto_Sys::init() {
   // Assume drive train is already inited
   // Assume that weaponssystem is already inited
@@ -50,7 +49,7 @@ void Auto_Sys::lineFollowing() {
   delay(10);
 }
 
-void Auto_Sys::checkSonar() {
+int Auto_Sys::checkSonar() {
   int val = 0;
   // Sending the trigger pulse
   pinMode(SONAR_TRIG, OUTPUT);
@@ -68,10 +67,15 @@ void Auto_Sys::checkSonar() {
   Serial.print(val);
   Serial.println("in");
 
+  return val;
+}
+
+void Auto_Sys::preventCrash() {
   // prevent crash oh no
-  if (val < 6) {
-    while (val < 6) {
+  if (checkSonar() < 6) {
+    while (checkSonar() < 6) {
       robot->stop();
+      delay(10);
     }
   }
   delay(10);
@@ -80,12 +84,59 @@ void Auto_Sys::checkSonar() {
 void Auto_Sys::doAutonomous() {
   // 45 second timer
   unsigned long stoptime = millis() + 45000;
+  robot->drive(FORWARD);
+  delay(3000);
+  robot->pivot(LEFT);
+  delay(1500);
+  boolean stateSet = false;
   while (millis() < stoptime) {
-    lineFollowing();
-    checkSonar();
+    unsigned long timeToNextMvmt = millis() + (45 * 142.18);
+    int mvntStage = 0;
+    if (timeToNextMvmt >= millis() && stateSet) {
+      mvntStage++;
+      // loopback
+      if (mvntStage % 4 == 0) {
+        mvntStage = 0;
+      }
+      stateSet = false;
+    }
+
+    switch (mvntStage) {
+      case 0:
+        robot->drive(FORWARD);
+        if (!stateSet) {
+          timeToNextMvmt = millis() + (45 * 142.18);
+          stateSet = true;
+        }
+        break;
+      case 1:
+        robot->stop();
+        if (!stateSet) {
+          timeToNextMvmt = millis() + 500;
+          stateSet = true;
+        }
+      case 2:
+        robot->pivot(LEFT);
+        if (!stateSet) {
+          timeToNextMvmt = millis() + 1000;
+          stateSet = true;
+        }
+        break;
+      case 3:
+        robot->stop();
+        if (!stateSet) {
+          timeToNextMvmt = millis() + 500;
+          stateSet = true;
+        }
+        break;
+    }
+
+     preventCrash();
     if (irSys->getRecv()->decode(irSys->getResults())) {
+      robot->stop();
       irSys->processHit();
       irSys->getRecv()->resume();
+      
     }
   }
 }

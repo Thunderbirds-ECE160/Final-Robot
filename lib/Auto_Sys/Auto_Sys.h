@@ -56,8 +56,9 @@ class Auto_Sys {
   void init();
   int doAvg(int[]);
   void lineFollowing();
-  void checkSonar();
+  int checkSonar();
   void doAutonomous();
+  void preventCrash();
 };
 
 #endif
