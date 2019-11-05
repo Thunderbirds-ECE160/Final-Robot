@@ -6,7 +6,7 @@
 #define CW_ROT 1300
 #define CCW_ROT 1700
 #define STOP_ROT 1500
-#define CW_LOW_ROT 1450
+#define CW_LOW_ROT 1480
 #define CCW_LOW_ROT 1550
 #define trig 2  // pin sending signal
 #define echo 2  // pin receiving the signal
@@ -16,46 +16,49 @@ Servo leftServo;
 Servo rightServo;
 Servo gripper;
 
-unsigned long int tOFF = 0;
+unsigned long int tOFF = 73 * 142.18 ;
 int d = 20;
 
 
 //**************************************************************
 void setup() {
   Serial.begin(9600);
-leftServo.attach(12);
-rightServo.attach(13);
-
+  leftServo.attach(12);
+  rightServo.attach(13);
+  
+  leftServo.writeMicroseconds(CCW_ROT);
+  rightServo.writeMicroseconds(CW_ROT);
+  delay(3000);
+  leftServo.writeMicroseconds(STOP_ROT);
+  rightServo.writeMicroseconds(CW_ROT);
+  delay(1500);
+ 
 }
 
 
 //**************************************************************
 void loop() {
-  Serial.println(tOFF);
-  if ( millis() > tOFF ) {
-    leftServo.writeMicroseconds(CW_ROT);
-    rightServo.writeMicroseconds(CCW_ROT);
-    delay(500);
-    leftServo.writeMicroseconds(STOP_ROT);
-    rightServo.writeMicroseconds(STOP_ROT);
-   delay(500);
+ 
+  while ( millis() <= tOFF ) {
     leftServo.writeMicroseconds(CCW_ROT);
     rightServo.writeMicroseconds(CW_ROT);
-   delay(500);
+  }
+
+   
     leftServo.writeMicroseconds(STOP_ROT);
     rightServo.writeMicroseconds(STOP_ROT);
-  }
- else{
+    delay(500);
+    leftServo.writeMicroseconds(STOP_ROT);
+    rightServo.writeMicroseconds(CW_ROT);
+    delay(1000);
+    leftServo.writeMicroseconds(STOP_ROT);
+    rightServo.writeMicroseconds(STOP_ROT);
   
-  tOFF = millis() + (20 * 142.18);
-  Serial.println(tOFF);
-  }
-  
-}
 
 
-long driveTime() {
-  return d * 142.18;
+    tOFF = millis()+(45 * 142.18);
+    Serial.println(tOFF);
+ 
 }
 
 /*
