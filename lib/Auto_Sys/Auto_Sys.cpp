@@ -1,6 +1,7 @@
 /*************************************************************************************************************************************************
- * File:
+ * File: Auto_Sys.cpp
  * Author: Alex Westerman
+ * Contains code written by Alex Westerman, Joshua Roehm, and David Purdy
  * Date Created:
  * Description
  * ======================
@@ -73,22 +74,26 @@ int Auto_Sys::checkSonar() {
 void Auto_Sys::preventCrash() {
   // prevent crash oh no
   if (checkSonar() < 6) {
-    while (checkSonar() < 6) {
-      robot->stop();
-      delay(10);
-    }
+    robot->stop();
+    delay(10);
+    robot->drive(BACKWARD);
+    delay(100);
+    robot->stop();
+    delay(500);
   }
   delay(10);
 }
 
 void Auto_Sys::doAutonomous() {
+  boolean stateSet = false;
   // 45 second timer
   unsigned long stoptime = millis() + 45000;
   robot->drive(FORWARD);
   delay(3000);
   robot->pivot(LEFT);
   delay(1500);
-  boolean stateSet = false;
+  robot->stop();
+
   while (millis() < stoptime) {
     unsigned long timeToNextMvmt = millis() + (45 * 142.18);
     int mvntStage = 0;
@@ -131,12 +136,7 @@ void Auto_Sys::doAutonomous() {
         break;
     }
 
-     preventCrash();
-    if (irSys->getRecv()->decode(irSys->getResults())) {
-      robot->stop();
-      irSys->processHit();
-      irSys->getRecv()->resume();
-      
-    }
+    preventCrash();
+    irSys->standby();
   }
 }

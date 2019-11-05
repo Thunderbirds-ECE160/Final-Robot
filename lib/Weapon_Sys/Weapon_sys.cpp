@@ -11,18 +11,15 @@
 
 #include "Weapon_Sys.h"
 
+
 void Weapon_Sys::init() {
   reciever->enableIRIn();
   captElement = Element::NONE;
 }
 
-IRrecv* Weapon_Sys::getRecv() {
-  return reciever;
-}
+IRrecv* Weapon_Sys::getRecv() { return reciever; }
 
-decode_results* Weapon_Sys::getResults() {
-  return &hitCode;
-}
+decode_results* Weapon_Sys::getResults() { return &hitCode; }
 
 void Weapon_Sys::updateLED(int hitVal) {
   switch (hitVal) {
@@ -106,7 +103,9 @@ void Weapon_Sys::processHit() {
       break;
   }
   updateLED(hitCode.value);
-  updateLED(0x0);
+  if (captElement != Element::NONE) {
+    offTime = millis() + 5000;
+  }
 }
 
 void Weapon_Sys::standby() {
@@ -115,8 +114,7 @@ void Weapon_Sys::standby() {
     reciever->resume();
   }
   if (millis() >= offTime) {
-    digitalWrite(LED_BLUE, LOW);
-    digitalWrite(LED_RED, LOW);
-    digitalWrite(LED_GREEN, LOW);
+    captElement = Element::NONE;
+    updateLED(captElement);
   }
 }
