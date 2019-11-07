@@ -68,7 +68,7 @@ void Controls::readPS2() {
   if (controller->ButtonPressed(PSB_START)) {
     isTurnMode = !isTurnMode;
   }
-  if (controller->ButtonPressed(PSB_R2)) {
+  if (controller->ButtonPressed(PSB_R2)||controller->ButtonPressed(PSB_SQUARE)) {
     currentCMD = FIRE;
   }
 }
@@ -247,10 +247,11 @@ void Controls::parseInput(int cmd) {
 }
 
 void Controls::entry() {
-  if (irFireboi->getRecv()->decode(irFireboi->getResults())) {
+/*  if (irFireboi->getRecv()->decode(irFireboi->getResults())) {
     irFireboi->processHit();
     irFireboi->getRecv()->resume();
-  }
+  }*/
+  irFireboi->standby();
   switch (currentSys) {
     case Control_Sys::PS2_CONTROL:
       readPS2();

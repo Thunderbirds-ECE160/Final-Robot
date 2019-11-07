@@ -15,12 +15,15 @@
 
 #include "Auto_Sys.h"
 
+
 void Auto_Sys::init() {
   // Assume drive train is already inited
   // Assume that weaponssystem is already inited
   // This will be a "shell" function
 }
 
+//Only compile this function if we will use linefollowing
+#ifdef LINE_FOLLOW
 void Auto_Sys::lineFollowing() {
   if (analogRead(LINE_SEN_L) > (colBlack - COL_TOLERANCE) &&
       analogRead(LINE_SEN_M) < (colWhite + COL_TOLERANCE) &&
@@ -49,6 +52,7 @@ void Auto_Sys::lineFollowing() {
   }
   delay(10);
 }
+#endif
 
 int Auto_Sys::checkSonar() {
   int val = 0;
@@ -93,10 +97,9 @@ void Auto_Sys::doAutonomous() {
   robot->pivot(LEFT);
   delay(1500);
   robot->stop();
-
+  int mvntStage = 0;
+  unsigned long timeToNextMvmt = millis() + (45 * 142.18);
   while (millis() < stoptime) {
-    unsigned long timeToNextMvmt = millis() + (45 * 142.18);
-    int mvntStage = 0;
     if (timeToNextMvmt >= millis() && stateSet) {
       mvntStage++;
       // loopback

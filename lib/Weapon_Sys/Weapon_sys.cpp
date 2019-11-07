@@ -69,6 +69,7 @@ void Weapon_Sys::sendFireCode() {
                           12);  // Transmit the code 0x5A5 signal from IR LED
     delay(50);
   }
+  Serial.println("bangbang");
   // Have to enable recievers afterward (for some reason)
   // Delay is used as a "grace period" for the function to complete
   reciever->enableIRIn();

@@ -44,16 +44,15 @@ class Drive {
   // Servo Objects
   Servo leftServo;
   Servo rightServo;
-  Servo gripperServo;  // Optional
+
 
   int leftServoPin;
   int rightServoPin;
-  int gripperServoPin;
+
  public:
-  Drive(int left, int right, int grabber) {
+  Drive(int left, int right) {
     leftServoPin = left;
     rightServoPin = right;
-    gripperServoPin = grabber;
   }
 
   ~Drive() {}
@@ -63,21 +62,11 @@ class Drive {
 
   // Standard Driving Methods
   void drive(int);       // Driving (no limit)
-  void drive(int, int);  // Driving (for rotations of wheels)
   void turn(int);        // Turning (based on direciton)
   void spin(int);        // Spinning (no limit)
-  void spin(int, int);   // Spinning (for rotations of wheels)
   void pivot(int);       // Pivoting (no limit)
-  void pivot(int, int);  // Pivoting (for rotations of wheels)
   void stop();           // Stop moving
 
-  // Grabber Methods
-  // void grab();
-  // void release();
-  // void hold(int*);
-
-  // Overloaded Forward/Backward driving methods (Allows for traveling a certain
-  // amount of time)
 };
 
 #endif

@@ -41,7 +41,7 @@ IRsend transmitter;
 PS2X ps2Boi;
 
 // Drive object with servo pinouts
-Drive robot(LEFT_SERVO_PIN, RIGHT_SERVO_PIN, GRIPPER_SERVO_PIN);
+Drive robot(LEFT_SERVO_PIN, RIGHT_SERVO_PIN);
 
 Weapon_Sys weapons(&reciever, &transmitter);
 Auto_Sys autonomous(&weapons, &robot);

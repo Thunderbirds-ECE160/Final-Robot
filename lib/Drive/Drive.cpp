@@ -27,30 +27,10 @@
 void Drive::attachServos(){
   leftServo.attach(leftServoPin);
   rightServo.attach(rightServoPin);
-  gripperServo.attach(gripperServoPin);
 }
 
 // Driving (no limit)
 void Drive::drive(int dir) {
-  switch (dir) {
-    case FORWARD:
-      leftServo.writeMicroseconds(CCW_ROT);
-      rightServo.writeMicroseconds(CW_ROT);
-      break;
-    case BACKWARD:
-      leftServo.writeMicroseconds(CW_ROT);
-      rightServo.writeMicroseconds(CCW_ROT);
-      break;
-    default:
-      // Do nothing, this should not happed tbh
-      break;
-  }
-}
-
-// Driving (for rotations of wheels)
-void Drive::drive(int dir, int rev) {
-  // Overload just requires some math
-  // TODO: implement overloaded method stuff
   switch (dir) {
     case FORWARD:
       leftServo.writeMicroseconds(CCW_ROT);
@@ -82,6 +62,7 @@ void Drive::turn(int dir) {
   }
 }
 
+//Spinning
 void Drive::spin(int dir) {
   switch (dir) {
     case LEFT:
@@ -97,23 +78,7 @@ void Drive::spin(int dir) {
   }
 }
 
-void Drive::spin(int dir, int rev) {
-  // Overload just requires some math
-  // TODO: implement overloaded method stuff
-  switch (dir) {
-    case LEFT:
-      leftServo.writeMicroseconds(CW_ROT);
-      rightServo.writeMicroseconds(CW_ROT);
-      break;
-    case RIGHT:
-      leftServo.writeMicroseconds(CCW_ROT);
-      rightServo.writeMicroseconds(CCW_ROT);
-      break;
-    default:
-      break;
-  }
-}
-
+//Pivoting
 void Drive::pivot(int dir) {
   switch (dir) {
     case LEFT:
@@ -127,21 +92,7 @@ void Drive::pivot(int dir) {
   }
 }
 
-void Drive::pivot(int dir, int rev) {
-  // Overload just requires some math
-  // TODO: implement overloaded method stuff
-  switch (dir) {
-    case LEFT:
-      rightServo.writeMicroseconds(CW_ROT);
-      break;
-    case RIGHT:
-      leftServo.writeMicroseconds(CCW_ROT);
-    break;
-    default:
-      break;
-  }
-}
-
+//Stop
 void Drive::stop() {
   leftServo.writeMicroseconds(STOP_ROT);
   rightServo.writeMicroseconds(STOP_ROT);
