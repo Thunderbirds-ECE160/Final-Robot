@@ -11,7 +11,6 @@
 
 #include "Weapon_Sys.h"
 
-
 void Weapon_Sys::init() {
   reciever->enableIRIn();
   captElement = Element::NONE;
@@ -69,7 +68,10 @@ void Weapon_Sys::sendFireCode() {
                           12);  // Transmit the code 0x5A5 signal from IR LED
     delay(100);
   }
+
+#ifdef DEBUG_ME
   Serial.println("bangbang");
+#endif
   // Have to enable recievers afterward (for some reason)
   // Delay is used as a "grace period" for the function to complete
   delay(10);

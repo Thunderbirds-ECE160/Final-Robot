@@ -22,7 +22,7 @@ void Auto_Sys::init() {
   // This will be a "shell" function
 }
 
-//Only compile this function if we will use linefollowing
+// Only compile this function if we will use linefollowing
 #ifdef LINE_FOLLOW
 void Auto_Sys::lineFollowing() {
   if (analogRead(LINE_SEN_L) > (colBlack - COL_TOLERANCE) &&
@@ -68,9 +68,11 @@ int Auto_Sys::checkSonar() {
   pinMode(SONAR_ECHO, INPUT);
   val = pulseIn(SONAR_ECHO, HIGH) / 74 / 2;
 
-  // debugging
+// debugging
+#ifdef DEBUG_ME
   Serial.print(val);
   Serial.println("in");
+#endif
 
   return val;
 }

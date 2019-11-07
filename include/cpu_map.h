@@ -9,6 +9,10 @@
  **************************************************************************************************************************************************/
 #ifndef CPU_MAP_H_
 #define CPU_MAP_H_
+
+//Define this to activate debugging through serial
+//#define DEBUG_ME
+
 // Defining the Servo Pins
 //***DO NOT CHANGE - HARD WIRED ESSENTIALLY*
 #define LEFT_SERVO_PIN 12

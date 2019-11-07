@@ -60,7 +60,9 @@ Controls driveTrain(&robot, &ps2Boi, &weapons);
  *                         MAIN FUNCTIONS                     *
  *============================================================*/
 void setup() {
+#ifdef DEBUG_ME
   Serial.begin(9600);
+#endif
   pinMode(LED_GREEN, OUTPUT);
   pinMode(LED_RED, OUTPUT);
   pinMode(LED_BLUE, OUTPUT);
