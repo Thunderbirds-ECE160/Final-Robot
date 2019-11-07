@@ -68,7 +68,7 @@ void Controls::readPS2() {
   if (controller->ButtonPressed(PSB_START)) {
     isTurnMode = !isTurnMode;
   }
-  if (controller->ButtonPressed(PSB_R2)||controller->ButtonPressed(PSB_SQUARE)) {
+  if (controller->ButtonPressed(PSB_R1)||controller->ButtonPressed(PSB_SQUARE)) {
     currentCMD = FIRE;
   }
 }

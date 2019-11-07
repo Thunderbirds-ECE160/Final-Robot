@@ -67,11 +67,12 @@ void Weapon_Sys::sendFireCode() {
   for (int i = 0; i < 3; i++) {
     transmitter->sendSony(Element::ROBOT_HIT,
                           12);  // Transmit the code 0x5A5 signal from IR LED
-    delay(50);
+    delay(100);
   }
   Serial.println("bangbang");
   // Have to enable recievers afterward (for some reason)
   // Delay is used as a "grace period" for the function to complete
+  delay(10);
   reciever->enableIRIn();
 }
 
