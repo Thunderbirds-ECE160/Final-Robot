@@ -1,6 +1,7 @@
 /*************************************************************************************************************************************************
  * File: Weapon_Sys.cpp
- * Author: Alex Westerman
+ * Author: Alex Westerman, David Purdy
+ * Port Author : Alex Westerman
  * Date Created: 10/26/19
  * Description
  * ======================
@@ -10,6 +11,7 @@
 #include <cpu_map.h>
 
 #include "Weapon_Sys.h"
+
 
 void Weapon_Sys::init() {
   reciever->enableIRIn();
@@ -44,13 +46,16 @@ void Weapon_Sys::updateLED(int hitVal) {
       analogWrite(LED_GREEN, 255);
       break;
     case Element::WATER:
+
       analogWrite(LED_GREEN, 64);
       analogWrite(LED_BLUE, 128);
       break;
     case Element::ROBOT_HIT:
       analogWrite(LED_RED, 255);
+      Serial.println("Recieved Hit Code (0x5A5)");
       break;
     case Element::NONE:
+
       digitalWrite(LED_BLUE, LOW);
       digitalWrite(LED_RED, LOW);
       digitalWrite(LED_GREEN, LOW);
@@ -83,24 +88,45 @@ void Weapon_Sys::processHit() {
   switch (hitCode.value) {
     case Element::AIR:
       captElement = Element::AIR;
+#ifdef DEBUG_ME
+      Serial.println("Recieved Air Code (0xA19)");
+#endif
       break;
     case Element::EARTH:
       captElement = Element::EARTH;
+#ifdef DEBUG_ME
+      Serial.println("Recieved Earth Code (0xEA9)");
+#endif
       break;
     case Element::ELECTRICITY:
+#ifdef DEBUG_ME
+      Serial.println("Recieved Electricity Code (0xE1E)");
+#endif
       captElement = Element::ELECTRICITY;
       break;
     case Element::FIRE:
+#ifdef DEBUG_ME
+      Serial.println("Recieved Fire Code (0xF19)");
+#endif
       captElement = Element::FIRE;
       break;
     case Element::GRASS:
+#ifdef DEBUG_ME
+      Serial.println("Recieved Grass Code (0xC9A)");
+#endif
       captElement = Element::GRASS;
       break;
     case Element::WATER:
+#ifdef DEBUG_ME
+      Serial.println("Recieved Water Code (0xB13)");
+#endif
       captElement = Element::WATER;
       break;
     case Element::ROBOT_HIT:
       captElement = Element::ROBOT_HIT;
+#ifdef DEBUG_ME
+      Serial.println("Recieved Hit Code (0x5A5)");
+#endif
       break;
     default:
       captElement = Element::NONE;

@@ -1,13 +1,22 @@
+
 /*************************************************************************************************************************************************
  * File: Weapon_Sys.h
- * Author: Alex Westerman
+ * Author: Alex Westerman, David Purdy
+ * Code was ported to a library format by Alex Westerman
  * Date Created: 10/24/2019
  * Description
  * ======================
  * This class defines how the IR tronsmitter and IR hit recievers interact with
- *the elements and other robots. Class Variables
+ *the elements and other robots. 
+
+ * Global Type / Class Definitions
  * ======================
- *
+ * enum Element - This enumeration contains all the different values for the IR hit codes and a "none" value used for specific operations
+ * Weapon_Sys - Object representing the IR reciever and transmitter contoller
+ * 
+ * Class Variables
+ * ======================
+ * IRRecv* reciever - Pointer to an IR Reciever object. It should be noted that there is only one object because 
  *
  * Class Functions
  * ======================
