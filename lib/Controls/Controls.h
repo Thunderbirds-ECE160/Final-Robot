@@ -4,10 +4,21 @@
  * Date Created: 10/24/2019
  * Description
  * ======================
- * This class will be the replacement for the previous IR_Control and
- *PS2_Control libraries Class Variables
- * ======================
+ * This is the prototype class for the Teleoperation mode controls. This will
+ * include interfacing with the IR subsystem for firing and receiving codes, and
+ * the PS2 controller library for an external controls system
  *
+ * Class Variables
+ * ======================
+ * Drive* robot - Pointer to the Drivetrain Object
+ * Control_Sys currentSys - Enum object to define which controls system to use (PS2_CONTROL or IR_CONTROL)
+ * PS2X* controller - Pointer to the PS2 Controller Object
+ * IRrecv* remote - Pointer to the IR Receiver object (May be empty)
+ * Weapon_Sys* irFireboi - Pointer to the IR subsystem
+ * decode_results prev_cmd - Object to store a non-repeat IR remote command
+ * decode_results recv_cmd - Object to store the most recent IR remote command received
+ * int currentCMD - Storage integer used for determining current movement 
+ * bool isTurnMode - Boolean to change controller actions
  *
  * Class Functions
  * ======================
