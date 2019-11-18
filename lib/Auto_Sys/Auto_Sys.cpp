@@ -1,12 +1,11 @@
 /*************************************************************************************************************************************************
  * File: Auto_Sys.cpp
- * Author: Alex Westerman
- * Contains code written by Alex Westerman, Joshua Roehm, and David Purdy
- * Date Created:
+ * Author: Alex Westerman, David Purdy, Joshua Roehm
+ * Port Author: Alex Westerman
+ * Date Created: 10/31/19
  * Description
  * ======================
- *
- * This file implements the class prototype(s) defined in
+ * This file implements the class prototype(s) defined in Auto_Sys.h
  **************************************************************************************************************************************************/
 /*============================================================*
  *                      INCLUDE THINGS                        *
@@ -80,6 +79,7 @@ int Auto_Sys::checkSonar() {
 void Auto_Sys::preventCrash() {
   // prevent crash oh no
   if (checkSonar() < 6) {
+    // Stop and drive backward
     robot->stop();
     delay(10);
     robot->drive(BACKWARD);
@@ -91,16 +91,25 @@ void Auto_Sys::preventCrash() {
 }
 
 void Auto_Sys::doAutonomous() {
+  // State Variable initialization
   boolean stateSet = false;
+  int mvntStage = 0;
+
   // 45 second timer
   unsigned long stoptime = millis() + 45000;
+
+  // Manually defined movement
   robot->drive(FORWARD);
   delay(3000);
   robot->pivot(LEFT);
   delay(1500);
   robot->stop();
-  int mvntStage = 0;
+
+  // Begin movement state machine
+  // First state time
   unsigned long timeToNextMvmt = millis() + (45 * 142.18);
+
+  // State transition code
   while (millis() < stoptime) {
     if (timeToNextMvmt >= millis() && stateSet) {
       mvntStage++;
@@ -111,6 +120,7 @@ void Auto_Sys::doAutonomous() {
       stateSet = false;
     }
 
+    // Code to execute based on state
     switch (mvntStage) {
       case 0:
         robot->drive(FORWARD);
@@ -141,6 +151,7 @@ void Auto_Sys::doAutonomous() {
         break;
     }
 
+    // Housekeeping functions
     preventCrash();
     irSys->standby();
   }

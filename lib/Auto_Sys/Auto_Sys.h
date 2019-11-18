@@ -1,17 +1,25 @@
 /*************************************************************************************************************************************************
- * File:
- * Author: Alex Westerman
- * Date Created:
+ * File: Auto_Sys.h
+ * Author: Alex Westerman, David Purdy, Joshua Roehm
+ * Port Author: Alex Westerman
+ * Date Created: 10/31/2019
  * Description
  * ======================
- *
+ * This class defines an autonomous mode for the robot
+ * 
  * Class Variables
  * ======================
- *
+ * Weapon_Sys* irSys - Pointer to the IR Subsystem Object
+ * Drive* robot - Pointer to the drivetrain object
  *
  * Class Functions
  * ======================
- *
+ * void init() - Initialization for the Auto_Sys object. Currently an empty function as of the most recent implementation
+ * int doAvg(int[]) - Simple Average function that returns the average of an array of ints
+ * void lineFollowing() - Simple line following function 
+ * int checkSonar() - Function that uses the sonar to find the distance (in inches) of the nearest obstacle
+ * void doAutonomous() - Main autonomous mode function that is used  
+ * void preventCrash();
  *
  **************************************************************************************************************************************************/
 #ifndef AUTO_SYS_H_
@@ -43,7 +51,6 @@ class Auto_Sys {
   // pointer vars for Weapon_Sys, Drive, and a Sonar
   Weapon_Sys* irSys;
   Drive* robot;
-
 
  public:
   Auto_Sys(Weapon_Sys* _irSys, Drive* _robot) {
